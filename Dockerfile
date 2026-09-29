@@ -17,7 +17,7 @@ COPY apps/web/package.json apps/web/
 RUN npm ci --omit=dev --workspace apps/api --include-workspace-root=false
 
 # ---- runtime: distroless (no shell, no package manager), runs as a non-root user ----
-FROM gcr.io/distroless/nodejs22-debian12:nonroot
+FROM gcr.io/distroless/nodejs22-debian13:nonroot
 ENV NODE_ENV=production \
     PORT=8080 \
     STATIC_DIR=/app/public \

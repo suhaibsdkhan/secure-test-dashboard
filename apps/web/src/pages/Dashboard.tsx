@@ -54,11 +54,14 @@ export function Dashboard() {
         <div className="tile">
           <span className="tile-label">Latest pass rate</span>
           <span className="tile-value">{formatPct(rate)}</span>
-          {delta != null && (
-            <span className={delta < 0 ? "delta down" : "delta up"}>
-              {delta < 0 ? "▼" : "▲"} {formatPct(Math.abs(delta))} vs previous run
-            </span>
-          )}
+          {delta != null &&
+            (Math.abs(delta) < 0.0005 ? (
+              <span className="tile-sub">Same as previous run</span>
+            ) : (
+              <span className={delta < 0 ? "delta down" : "delta up"}>
+                {delta < 0 ? "▼" : "▲"} {formatPct(Math.abs(delta))} vs previous run
+              </span>
+            ))}
         </div>
         <div className="tile">
           <span className="tile-label">Failing in latest run</span>

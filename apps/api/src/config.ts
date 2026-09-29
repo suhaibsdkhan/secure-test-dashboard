@@ -14,6 +14,9 @@ const schema = z.object({
   // Optional here so the migrate CLI can run without it; server.ts refuses to start without it.
   INGEST_TOKEN: z.string().min(32, "INGEST_TOKEN must be at least 32 characters").optional(),
   STATIC_DIR: z.string().optional(),
+  RATE_LIMIT_READS_PER_MIN: z.coerce.number().int().positive().default(300),
+  RATE_LIMIT_UPLOADS_PER_MIN: z.coerce.number().int().positive().default(30),
+  TRUST_PROXY: z.coerce.number().int().min(0).max(5).default(0),
 });
 
 export type Config = z.infer<typeof schema>;
