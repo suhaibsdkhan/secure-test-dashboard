@@ -31,7 +31,7 @@ The token is in AWS Secrets Manager once deployed:
 aws secretsmanager get-secret-value --secret-id test-dashboard-ingest-token --query SecretString --output text
 ```
 
-## From the test-automation project's GitHub Actions
+## From another repository's GitHub Actions
 
 Add a `DASHBOARD_URL` repository variable and a `DASHBOARD_INGEST_TOKEN` secret to that
 repo, then append to its test job:

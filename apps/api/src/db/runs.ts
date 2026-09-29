@@ -122,16 +122,19 @@ export async function getSummary(pool: pg.Pool, project?: string) {
      GROUP BY c.suite, c.name ORDER BY avg_ms DESC LIMIT 5`,
     [project ?? null],
   );
-  // Flaky = both passed and failed on the same branch within the last 30 days.
+  // Flaky = flipped between passing and failing at least twice on the same branch in the last
+  // 30 days. One flip is a break or a fix, not flakiness.
   const flaky = await pool.query(
-    `SELECT c.suite, c.name,
-            count(*) FILTER (WHERE c.status IN ('failed','errored'))::int AS failures,
-            count(*)::int AS samples
-     FROM test_cases c JOIN test_runs r ON r.id = c.run_id
-     WHERE ($1::text IS NULL OR r.project = $1) AND r.started_at > now() - interval '30 days'
-     GROUP BY c.suite, c.name, r.branch
-     HAVING count(*) FILTER (WHERE c.status = 'passed') > 0
-        AND count(*) FILTER (WHERE c.status IN ('failed','errored')) > 0
+    `WITH history AS (
+       SELECT c.suite, c.name, r.branch, c.status IN ('failed','errored') AS bad,
+              lag(c.status IN ('failed','errored')) OVER (PARTITION BY c.suite, c.name, r.branch ORDER BY r.started_at) AS prev
+       FROM test_cases c JOIN test_runs r ON r.id = c.run_id
+       WHERE ($1::text IS NULL OR r.project = $1) AND r.started_at > now() - interval '30 days' AND c.status <> 'skipped'
+     )
+     SELECT suite, name, count(*) FILTER (WHERE bad)::int AS failures, count(*)::int AS samples
+     FROM history
+     GROUP BY suite, name, branch
+     HAVING count(*) FILTER (WHERE prev IS NOT NULL AND prev <> bad) >= 2
      ORDER BY failures DESC LIMIT 5`,
     [project ?? null],
   );

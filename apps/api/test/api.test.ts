@@ -7,7 +7,9 @@ import { migrate } from "../src/db/migrate.js";
 
 const TOKEN = "t".repeat(40);
 const databaseUrl = process.env.TEST_DATABASE_URL;
-const sample = (name: string) => readFileSync(new URL(`../../../samples/${name}`, import.meta.url), "utf8");
+// Timestamps are stripped so runs land at now(), in upload order, inside the 30-day windows.
+const sample = (name: string) =>
+  readFileSync(new URL(`../../../samples/${name}`, import.meta.url), "utf8").replace(/ timestamp="[^"]*"/g, "");
 
 describe.skipIf(!databaseUrl)("API (requires TEST_DATABASE_URL)", () => {
   let pool: pg.Pool;
@@ -51,9 +53,14 @@ describe.skipIf(!databaseUrl)("API (requires TEST_DATABASE_URL)", () => {
   it("builds a summary with trend and flaky tests", async () => {
     await upload(sample("pytest-run-pass.xml")).expect(201);
     await upload(sample("pytest-run-fail.xml")).expect(201);
-    const { body } = await request(app).get("/api/summary").expect(200);
+    let { body } = await request(app).get("/api/summary").expect(200);
     expect(body.projects).toEqual([expect.objectContaining({ project: "shop-ui", runs: 2 })]);
     expect(body.trend).toHaveLength(2);
+    // A single pass -> fail flip is a regression, not flakiness.
+    expect(body.flaky).toEqual([]);
+
+    await upload(sample("pytest-run-pass.xml")).expect(201);
+    ({ body } = await request(app).get("/api/summary").expect(200));
     expect(body.flaky.map((f: { name: string }) => f.name).sort()).toEqual([
       "test_checkout_with_saved_card",
       "test_invalid_password_shows_error",
