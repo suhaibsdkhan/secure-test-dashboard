@@ -83,7 +83,7 @@ export function Dashboard() {
       <div className="two-col">
         <section className="card">
           <h2>Flaky tests</h2>
-          <p className="hint">Passed and failed on the same branch in the last 30 days.</p>
+          <p className="hint">Flipped between pass and fail at least twice on one branch in the last 30 days.</p>
           {flaky.length === 0 ? (
             <p className="muted">None detected.</p>
           ) : (
