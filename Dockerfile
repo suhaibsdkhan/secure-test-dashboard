@@ -1,5 +1,5 @@
 # ---- build: compile the React app and the API ----
-FROM node:22-alpine AS build
+FROM node:26-alpine AS build
 WORKDIR /src
 COPY package.json package-lock.json ./
 COPY apps/api/package.json apps/api/
@@ -9,7 +9,7 @@ COPY apps ./apps
 RUN npm run build
 
 # ---- deps: production-only node_modules for the API ----
-FROM node:22-alpine AS deps
+FROM node:26-alpine AS deps
 WORKDIR /src
 COPY package.json package-lock.json ./
 COPY apps/api/package.json apps/api/
