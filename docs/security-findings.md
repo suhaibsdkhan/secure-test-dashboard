@@ -130,16 +130,3 @@ These never showed up as findings because they were built before the first scan:
 | CloudFront to ALB hop is HTTP | Residual risk in no-domain mode. With a domain and `certificate_arn`, TLS runs end to end. |
 
 Each accepted Trivy item has a `#trivy:ignore` comment with the reason next to the resource.
-
-## Interview version
-
-> I built a dashboard that displays the results of my test-automation project, and put
-> OWASP ZAP, Trivy and dependency scanning in its GitHub Actions pipeline as blocking gates.
-> The first ZAP scan flagged missing security headers: no Content-Security-Policy and no
-> clickjacking protection. I added a strict CSP with no `unsafe-inline`, which worked because
-> the React build has no inline code. Trivy found a critical OpenSSL CVE in my base image even
-> though my npm dependencies were clean, so I moved to a newer distroless image. The
-> infrastructure scan flagged that my load balancer served plain HTTP; since I had no domain,
-> I put CloudFront and a WAF in front and locked the load balancer to CloudFront only. The
-> part I found most interesting was that my own rate limiter was silently blinding the
-> active scan with 429s, so a clean result didn't mean what I thought it meant.
