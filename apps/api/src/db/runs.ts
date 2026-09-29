@@ -105,9 +105,13 @@ export async function getRun(pool: pg.Pool, id: string) {
 }
 
 export async function getSummary(pool: pg.Pool, project?: string) {
-  const projects = await pool.query<{ project: string; runs: number; last_run: string }>(
-    `SELECT project, count(*)::int AS runs, max(started_at) AS last_run
-     FROM test_runs GROUP BY project ORDER BY last_run DESC`,
+  // Every project with its run count and its latest run's outcome.
+  const projects = await pool.query(
+    `SELECT l.project, c.runs, l.started_at AS last_run, l.id AS last_run_id,
+            l.total, l.passed, l.failed, l.errored, l.skipped
+     FROM (SELECT DISTINCT ON (project) * FROM test_runs ORDER BY project, started_at DESC) l
+     JOIN (SELECT project, count(*)::int AS runs FROM test_runs GROUP BY project) c USING (project)
+     ORDER BY l.project`,
   );
   const trend = await pool.query(
     `SELECT id, project, started_at, total, passed, failed, errored, skipped FROM (
@@ -119,7 +123,7 @@ export async function getSummary(pool: pg.Pool, project?: string) {
     `SELECT c.suite, c.name, round(avg(c.duration_ms))::int AS avg_ms, count(*)::int AS samples
      FROM test_cases c JOIN test_runs r ON r.id = c.run_id
      WHERE ($1::text IS NULL OR r.project = $1) AND r.started_at > now() - interval '30 days'
-     GROUP BY c.suite, c.name ORDER BY avg_ms DESC LIMIT 5`,
+     GROUP BY c.suite, c.name HAVING avg(c.duration_ms) > 0 ORDER BY avg_ms DESC LIMIT 5`,
     [project ?? null],
   );
   // Flaky = flipped between passing and failing at least twice on the same branch in the last

@@ -25,9 +25,10 @@ services:
       PGPASSWORD: ${POSTGRES_PASSWORD}
       PGDATABASE: dashboard
       INGEST_TOKEN: ${INGEST_TOKEN:?set INGEST_TOKEN in .env}
-      # The ZAP job raises these so the active scan isn't throttled into testing nothing.
+      # The ZAP job raises these so the active scan isn't throttled into testing nothing,
+      # and uploads get headroom locally so `npm run seed` runs in one go.
       RATE_LIMIT_READS_PER_MIN: ${RATE_LIMIT_READS_PER_MIN:-300}
-      RATE_LIMIT_UPLOADS_PER_MIN: ${RATE_LIMIT_UPLOADS_PER_MIN:-30}
+      RATE_LIMIT_UPLOADS_PER_MIN: ${RATE_LIMIT_UPLOADS_PER_MIN:-300} # local dev; the app defaults to 30 in production
     ports:
       - "127.0.0.1:8080:8080"
     depends_on:
