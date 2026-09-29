@@ -1,0 +1,23 @@
+{
+  "name": "secure-test-dashboard",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Dashboard for automated test results, with a security-scanned CI/CD pipeline and Terraform deployment to AWS.",
+  "workspaces": [
+    "apps/api",
+    "apps/web"
+  ],
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "build": "npm run build -w apps/web && npm run build -w apps/api",
+    "dev:api": "npm run dev -w apps/api",
+    "dev:web": "npm run dev -w apps/web",
+    "lint": "npm run lint --workspaces",
+    "typecheck": "npm run typecheck --workspaces",
+    "test": "npm run test --workspaces",
+    "migrate": "npm run migrate -w apps/api",
+    "seed": "node scripts/seed.mjs"
+  }
+}

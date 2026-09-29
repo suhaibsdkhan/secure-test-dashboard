@@ -1,0 +1,38 @@
+# Local development stack: Postgres + the app (API serving the built React dashboard).
+#   cp .env.example .env && docker compose up --build
+#   npm run seed        # load sample results
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: dashboard
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}
+      POSTGRES_DB: dashboard
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U dashboard -d dashboard"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    # Not published to the host; only the app container can reach it.
+
+  app:
+    build: .
+    environment:
+      PGHOST: db
+      PGUSER: dashboard
+      PGPASSWORD: ${POSTGRES_PASSWORD}
+      PGDATABASE: dashboard
+      INGEST_TOKEN: ${INGEST_TOKEN:?set INGEST_TOKEN in .env}
+    ports:
+      - "127.0.0.1:8080:8080"
+    depends_on:
+      db:
+        condition: service_healthy
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: ["no-new-privileges:true"]
+
+volumes:
+  pgdata:

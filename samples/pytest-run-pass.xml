@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="ui-regression" time="42.817">
+  <testsuite name="tests.test_login" errors="0" failures="0" skipped="0" tests="3" time="12.402" timestamp="2026-09-28T14:02:11">
+    <testcase classname="tests.test_login" name="test_valid_login_redirects_to_dashboard" time="4.211"/>
+    <testcase classname="tests.test_login" name="test_invalid_password_shows_error" time="3.905"/>
+    <testcase classname="tests.test_login" name="test_locked_account_message" time="4.286"/>
+  </testsuite>
+  <testsuite name="tests.test_checkout" errors="0" failures="0" skipped="1" tests="4" time="30.415" timestamp="2026-09-28T14:02:24">
+    <testcase classname="tests.test_checkout" name="test_add_item_to_cart" time="6.120"/>
+    <testcase classname="tests.test_checkout" name="test_apply_discount_code" time="7.844"/>
+    <testcase classname="tests.test_checkout" name="test_checkout_with_saved_card" time="16.451"/>
+    <testcase classname="tests.test_checkout" name="test_paypal_checkout" time="0.000">
+      <skipped message="PayPal sandbox unavailable in CI"/>
+    </testcase>
+  </testsuite>
+</testsuites>

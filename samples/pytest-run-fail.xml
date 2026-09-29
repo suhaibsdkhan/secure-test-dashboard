@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="ui-regression" time="47.093">
+  <testsuite name="tests.test_login" errors="0" failures="1" skipped="0" tests="3" time="15.771" timestamp="2026-09-29T09:15:40">
+    <testcase classname="tests.test_login" name="test_valid_login_redirects_to_dashboard" time="4.020"/>
+    <testcase classname="tests.test_login" name="test_invalid_password_shows_error" time="7.530">
+      <failure message="AssertionError: expected error banner 'Invalid credentials' but found none">Traceback (most recent call last):
+  File "tests/test_login.py", line 41, in test_invalid_password_shows_error
+    assert page.error_banner.text == "Invalid credentials"
+selenium.common.exceptions.TimeoutException: Message: element #error-banner not visible after 5s</failure>
+    </testcase>
+    <testcase classname="tests.test_login" name="test_locked_account_message" time="4.221"/>
+  </testsuite>
+  <testsuite name="tests.test_checkout" errors="1" failures="0" skipped="1" tests="4" time="31.322" timestamp="2026-09-29T09:15:56">
+    <testcase classname="tests.test_checkout" name="test_add_item_to_cart" time="6.402"/>
+    <testcase classname="tests.test_checkout" name="test_apply_discount_code" time="8.119"/>
+    <testcase classname="tests.test_checkout" name="test_checkout_with_saved_card" time="16.801">
+      <error message="WebDriverException: chrome not reachable">session deleted because of page crash</error>
+    </testcase>
+    <testcase classname="tests.test_checkout" name="test_paypal_checkout" time="0.000">
+      <skipped message="PayPal sandbox unavailable in CI"/>
+    </testcase>
+  </testsuite>
+</testsuites>
