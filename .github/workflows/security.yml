@@ -124,11 +124,13 @@ jobs:
           } > .env
           docker compose up --build -d --wait
           node scripts/seed.mjs
+      # ZAP's own proxy defaults to port 8080, the app's port on this host network, so it gets
+      # a fixed port of its own (-P) instead of racing the app for 8080.
       - name: Baseline scan (passive, whole site)
         run: |
           mkdir -p zap && chmod 777 zap && cp .zap/rules.tsv zap/
           docker run --rm --network host -v "$PWD/zap:/zap/wrk:rw" "$ZAP_IMAGE" \
-            zap-baseline.py -t http://127.0.0.1:8080 -c rules.tsv -j \
+            zap-baseline.py -t http://127.0.0.1:8080 -c rules.tsv -j -P 8091 \
             -r baseline.html -J baseline.json -w baseline.md 2>&1 | tee zap/baseline.log
           exit "${PIPESTATUS[0]}"
       - name: API scan (active, from the OpenAPI spec, authenticated)
@@ -137,7 +139,7 @@ jobs:
           sed 's#http://localhost:8080#http://127.0.0.1:8080#' apps/api/openapi.yaml > zap/openapi.yaml
           docker run --rm --network host -v "$PWD/zap:/zap/wrk:rw" \
             -e ZAP_AUTH_HEADER_VALUE="Bearer $(grep ^INGEST_TOKEN .env | cut -d= -f2)" "$ZAP_IMAGE" \
-            zap-api-scan.py -t /zap/wrk/openapi.yaml -f openapi -c rules.tsv \
+            zap-api-scan.py -t /zap/wrk/openapi.yaml -f openapi -c rules.tsv -P 8092 \
             -r api.html -J api.json -w api.md 2>&1 | tee zap/api.log
           exit "${PIPESTATUS[0]}"
       - name: Convert ZAP results to JUnit

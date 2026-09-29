@@ -52,9 +52,9 @@ mkdir -p "$work/zap" && chmod 777 "$work/zap"
 cp "$repo/.zap/rules.tsv" "$work/zap/"
 sed 's#http://localhost:8080#http://127.0.0.1:18080#' "$repo/apps/api/openapi.yaml" > "$work/zap/openapi.yaml"
 docker run --rm --network host -v "$work/zap:/zap/wrk:rw" "$zap_image" \
-  zap-baseline.py -t http://127.0.0.1:18080 -c rules.tsv -j > "$work/zap-baseline.log" 2>&1 || true
+  zap-baseline.py -t http://127.0.0.1:18080 -c rules.tsv -j -P 8091 > "$work/zap-baseline.log" 2>&1 || true
 docker run --rm --network host -v "$work/zap:/zap/wrk:rw" -e ZAP_AUTH_HEADER_VALUE="Bearer $token" "$zap_image" \
-  zap-api-scan.py -t /zap/wrk/openapi.yaml -f openapi -c rules.tsv > "$work/zap-api.log" 2>&1 || true
+  zap-api-scan.py -t /zap/wrk/openapi.yaml -f openapi -c rules.tsv -P 8092 > "$work/zap-api.log" 2>&1 || true
 for s in baseline api; do
   npx --prefix "$repo/apps/api" tsx "$repo/apps/api/src/cli/to-junit.ts" zap "$work/zap-$s.log" "zap-$s" > "$out/zap-$s.xml"
 done
