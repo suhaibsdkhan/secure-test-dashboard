@@ -72,11 +72,19 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci --workspace apps/api
       - run: docker build -t app:scan .
       - name: Scan image
         run: |
           docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v "$PWD:/out" "$TRIVY_IMAGE" image --quiet \
             --scanners vuln,secret --format sarif --output /out/trivy-image.sarif app:scan
+          docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v "$PWD:/out" "$TRIVY_IMAGE" image --quiet \
+            --scanners vuln,secret --format json --output /out/trivy-image.json app:scan
+          npx --prefix apps/api tsx apps/api/src/cli/to-junit.ts trivy trivy-image.json trivy-image > trivy-image.xml
           docker run --rm -v /var/run/docker.sock:/var/run/docker.sock "$TRIVY_IMAGE" image --quiet \
             --scanners vuln,secret --severity HIGH,CRITICAL --ignore-unfixed --exit-code 1 app:scan
       - name: Upload to GitHub code scanning
@@ -85,6 +93,14 @@ jobs:
         with:
           sarif_file: trivy-image.sarif
           category: trivy-image
+      - name: Publish to the dashboard
+        if: always() && github.ref == 'refs/heads/main' && vars.DASHBOARD_URL != '' && hashFiles('trivy-image.xml') != ''
+        env:
+          DASHBOARD_URL: ${{ vars.DASHBOARD_URL }}
+          TOKEN: ${{ secrets.DASHBOARD_INGEST_TOKEN }}
+        run: |
+          curl -fsS -X POST "$DASHBOARD_URL/api/runs?project=trivy-image&branch=main&commit=$GITHUB_SHA" \
+            -H "Authorization: Bearer $TOKEN" -H "Content-Type: application/xml" --data-binary @trivy-image.xml
 
   zap:
     name: OWASP ZAP (baseline + API scan)
@@ -96,6 +112,7 @@ jobs:
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
           node-version-file: .nvmrc
+      - run: npm ci --workspace apps/api
       - name: Start the app with throwaway secrets
         run: |
           {
@@ -112,7 +129,8 @@ jobs:
           mkdir -p zap && chmod 777 zap && cp .zap/rules.tsv zap/
           docker run --rm --network host -v "$PWD/zap:/zap/wrk:rw" "$ZAP_IMAGE" \
             zap-baseline.py -t http://127.0.0.1:8080 -c rules.tsv -j \
-            -r baseline.html -J baseline.json -w baseline.md
+            -r baseline.html -J baseline.json -w baseline.md 2>&1 | tee zap/baseline.log
+          exit "${PIPESTATUS[0]}"
       - name: API scan (active, from the OpenAPI spec, authenticated)
         if: success() || failure()
         run: |
@@ -120,7 +138,25 @@ jobs:
           docker run --rm --network host -v "$PWD/zap:/zap/wrk:rw" \
             -e ZAP_AUTH_HEADER_VALUE="Bearer $(grep ^INGEST_TOKEN .env | cut -d= -f2)" "$ZAP_IMAGE" \
             zap-api-scan.py -t /zap/wrk/openapi.yaml -f openapi -c rules.tsv \
-            -r api.html -J api.json -w api.md
+            -r api.html -J api.json -w api.md 2>&1 | tee zap/api.log
+          exit "${PIPESTATUS[0]}"
+      - name: Convert ZAP results to JUnit
+        if: always()
+        run: |
+          for s in baseline api; do
+            [ -f "zap/$s.log" ] && npx --prefix apps/api tsx apps/api/src/cli/to-junit.ts zap "zap/$s.log" "zap-$s" > "zap/zap-$s.xml" || true
+          done
+      - name: Publish to the dashboard
+        if: always() && github.ref == 'refs/heads/main' && vars.DASHBOARD_URL != ''
+        env:
+          DASHBOARD_URL: ${{ vars.DASHBOARD_URL }}
+          TOKEN: ${{ secrets.DASHBOARD_INGEST_TOKEN }}
+        run: |
+          for s in baseline api; do
+            [ -s "zap/zap-$s.xml" ] || continue
+            curl -fsS -X POST "$DASHBOARD_URL/api/runs?project=zap-$s&branch=main&commit=$GITHUB_SHA" \
+              -H "Authorization: Bearer $TOKEN" -H "Content-Type: application/xml" --data-binary "@zap/zap-$s.xml"
+          done
       - name: Job summary
         if: always()
         run: cat zap/*.md >> "$GITHUB_STEP_SUMMARY" 2>/dev/null || true
