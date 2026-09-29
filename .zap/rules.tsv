@@ -1,0 +1,4 @@
+10027	IGNORE	Suspicious Comments: false positive. Matches the word 'select' in the minified React bundle (JSX <select> and a library URL comment), not a developer comment.
+10109	IGNORE	Modern Web Application: informational. Tells ZAP to use the Ajax spider (the workflow passes -j).
+100001	IGNORE	Unexpected Content-Type: only '/' remains, which is the HTML dashboard itself and correctly text/html. Soft-404 regressions are covered by apps/api/test/security.test.ts.
+90022	OUTOFSCOPE	http://.*/api/runs/[0-9a-f-]+$

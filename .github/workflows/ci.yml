@@ -1,0 +1,75 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: Lint, typecheck, test, build
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: dash
+          POSTGRES_PASSWORD: dash
+          POSTGRES_DB: dash_test
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U dash" --health-interval 5s --health-timeout 3s --health-retries 10
+    env:
+      TEST_DATABASE_URL: postgres://dash:dash@localhost:5432/dash_test
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run typecheck
+      - name: Test (JUnit output for the dashboard itself)
+        run: npm run test --workspaces -- --reporter=default --reporter=junit --outputFile.junit=junit.xml
+      - run: npm run build
+
+      # Dogfooding: this repo's own test results show up on the deployed dashboard.
+      # Set the DASHBOARD_URL variable and DASHBOARD_INGEST_TOKEN secret to enable.
+      - name: Upload results to the dashboard
+        if: always() && github.ref == 'refs/heads/main' && vars.DASHBOARD_URL != ''
+        env:
+          DASHBOARD_URL: ${{ vars.DASHBOARD_URL }}
+          TOKEN: ${{ secrets.DASHBOARD_INGEST_TOKEN }}
+        run: |
+          for ws in api web; do
+            curl -fsS -X POST "$DASHBOARD_URL/api/runs?project=dashboard-$ws&branch=main&commit=$GITHUB_SHA" \
+              -H "Authorization: Bearer $TOKEN" -H "Content-Type: application/xml" \
+              --data-binary "@apps/$ws/junit.xml"
+          done
+
+  terraform:
+    name: Terraform fmt and validate
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: infra/terraform
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: hashicorp/setup-terraform@dfe3c3f87815947d99a8997f908cb6525fc44e9e # v4.0.1
+        with:
+          terraform_version: 1.9.8
+      - run: terraform fmt -check -recursive
+      - run: terraform init -backend=false -input=false
+      - run: terraform validate
