@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites name="Harbour Bank API" tests="18" time="0.767">
+  <testsuite name="Accounts / Health check" id="a5829c02-991c-47da-9986-4eb56d3e90e7" timestamp="2026-09-29T19:14:34.796Z" tests="1" failures="0" errors="0" time="0.035">
+    <testcase name="service is UP" time="0.035" classname="AccountsHealthCheck"/>
+  </testsuite>
+  <testsuite name="Accounts / Open payer account" id="b3ef5b59-4844-435b-9358-8e034ac6a74b" timestamp="2026-09-29T19:14:34.796Z" tests="4" failures="0" errors="0" time="0.305">
+    <testcase name="201 Created with Location header" time="0.305" classname="AccountsOpenPayerAccount"/>
+    <testcase name="account number is 10 digits" time="0.305" classname="AccountsOpenPayerAccount"/>
+    <testcase name="opening balance equals initial deposit" time="0.305" classname="AccountsOpenPayerAccount"/>
+    <testcase name="new accounts are ACTIVE in CAD" time="0.305" classname="AccountsOpenPayerAccount"/>
+  </testsuite>
+  <testsuite name="Accounts / Open payee account" id="029af974-6c02-4978-b105-289d7c7c1450" timestamp="2026-09-29T19:14:34.796Z" tests="2" failures="0" errors="0" time="0.013">
+    <testcase name="201 Created" time="0.013" classname="AccountsOpenPayeeAccount"/>
+    <testcase name="balance defaults to zero" time="0.013" classname="AccountsOpenPayeeAccount"/>
+  </testsuite>
+  <testsuite name="Accounts / Get account" id="71974b7e-3aa6-4f7c-85ac-ffb4270ba47d" timestamp="2026-09-29T19:14:34.796Z" tests="2" failures="0" errors="0" time="0.042">
+    <testcase name="200 OK" time="0.042" classname="AccountsGetAccount"/>
+    <testcase name="response matches account schema" time="0.042" classname="AccountsGetAccount"/>
+  </testsuite>
+  <testsuite name="Accounts / Deposit" id="90320b26-bcd3-4296-8269-c008217456c0" timestamp="2026-09-29T19:14:34.796Z" tests="2" failures="0" errors="0" time="0.039">
+    <testcase name="200 OK" time="0.039" classname="AccountsDeposit"/>
+    <testcase name="balance increased by deposit" time="0.039" classname="AccountsDeposit"/>
+  </testsuite>
+  <testsuite name="Accounts / Get unknown account returns 404" id="0e754afd-ba99-40ef-9763-7fce77c7f339" timestamp="2026-09-29T19:14:34.796Z" tests="1" failures="0" errors="0" time="0.043">
+    <testcase name="404 with ACCOUNT_NOT_FOUND" time="0.043" classname="AccountsGetUnknownAccountReturns404"/>
+  </testsuite>
+  <testsuite name="Accounts / Open account with blank owner returns 400" id="f8880921-9d29-47f8-8c77-049745821d82" timestamp="2026-09-29T19:14:34.796Z" tests="1" failures="0" errors="0" time="0.033">
+    <testcase name="400 with field error on ownerName" time="0.033" classname="AccountsOpenAccountWithBlankOwnerReturns400"/>
+  </testsuite>
+  <testsuite name="Transfers / Transfer funds" id="71b999bb-bf17-47fa-b437-3fed85ecfca4" timestamp="2026-09-29T19:14:34.796Z" tests="4" failures="0" errors="0" time="0.045">
+    <testcase name="201 Created" time="0.045" classname="TransfersTransferFunds"/>
+    <testcase name="transfer COMPLETED" time="0.045" classname="TransfersTransferFunds"/>
+    <testcase name="reference is a UUID" time="0.045" classname="TransfersTransferFunds"/>
+    <testcase name="response time under 1s" time="0.045" classname="TransfersTransferFunds"/>
+  </testsuite>
+  <testsuite name="Transfers / Replay transfer with same Idempotency-Key" id="73902184-a08c-4996-ba79-06a3ec12dc88" timestamp="2026-09-29T19:14:34.796Z" tests="2" failures="0" errors="0" time="0.020">
+    <testcase name="200 OK, not a second 201" time="0.020" classname="TransfersReplayTransferWithSameIdempotencyKey"/>
+    <testcase name="returns the original transfer" time="0.020" classname="TransfersReplayTransferWithSameIdempotencyKey"/>
+  </testsuite>
+  <testsuite name="Transfers / Payer balance debited exactly once" id="d5b3e053-0d05-4984-bf7c-474082d5e718" timestamp="2026-09-29T19:14:34.796Z" tests="1" failures="0" errors="0" time="0.012">
+    <testcase name="1000.00 - 150.75 = 849.25" time="0.012" classname="TransfersPayerBalanceDebitedExactlyOnce"/>
+  </testsuite>
+  <testsuite name="Transfers / Payee balance credited exactly once" id="493b73e8-49b8-4078-914b-a74f2aeaede0" timestamp="2026-09-29T19:14:34.796Z" tests="1" failures="0" errors="0" time="0.010">
+    <testcase name="25.25 + 150.75 = 176.00" time="0.010" classname="TransfersPayeeBalanceCreditedExactlyOnce"/>
+  </testsuite>
+  <testsuite name="Transfers / Get transfer by reference" id="1dd30bfd-97ef-4a9d-9fb2-351c24f7a41a" timestamp="2026-09-29T19:14:34.796Z" tests="2" failures="0" errors="0" time="0.017">
+    <testcase name="200 OK" time="0.017" classname="TransfersGetTransferByReference"/>
+    <testcase name="amount and parties match" time="0.017" classname="TransfersGetTransferByReference"/>
+  </testsuite>
+  <testsuite name="Transfers / Transaction history shows the debit" id="1287efc0-69e9-45ca-86a7-2f8ecf4a7eb9" timestamp="2026-09-29T19:14:34.796Z" tests="1" failures="0" errors="0" time="0.051">
+    <testcase name="newest entry is the transfer DEBIT" time="0.051" classname="TransfersTransactionHistoryShowsTheDebit"/>
+  </testsuite>
+  <testsuite name="Transfers / Insufficient funds returns 422" id="e1828097-3ed6-4412-8309-2a04c9737709" timestamp="2026-09-29T19:14:34.796Z" tests="1" failures="0" errors="0" time="0.022">
+    <testcase name="422 INSUFFICIENT_FUNDS with an audit reference" time="0.022" classname="TransfersInsufficientFundsReturns422"/>
+  </testsuite>
+  <testsuite name="Transfers / Over the single transfer limit returns 422" id="99d00739-2f46-4090-9b35-ff1efaadb03b" timestamp="2026-09-29T19:14:34.796Z" tests="1" failures="0" errors="0" time="0.020">
+    <testcase name="422 LIMIT_EXCEEDED" time="0.020" classname="TransfersOverTheSingleTransferLimitReturns422"/>
+  </testsuite>
+  <testsuite name="Transfers / Transfer to same account returns 422" id="c9659d70-56aa-4a2e-9598-3b4d58c7a754" timestamp="2026-09-29T19:14:34.796Z" tests="1" failures="0" errors="0" time="0.013">
+    <testcase name="422 SAME_ACCOUNT" time="0.013" classname="TransfersTransferToSameAccountReturns422"/>
+  </testsuite>
+  <testsuite name="Transfers / Zero amount returns 400" id="f73ea3ac-9a49-4e8c-99cf-4fb9ac1bb4be" timestamp="2026-09-29T19:14:34.796Z" tests="1" failures="0" errors="0" time="0.036">
+    <testcase name="400 VALIDATION_FAILED on amount" time="0.036" classname="TransfersZeroAmountReturns400"/>
+  </testsuite>
+  <testsuite name="Transfers / Balances unchanged after rejected transfers" id="756ceb27-118d-4e1f-8675-32e72f26acc4" timestamp="2026-09-29T19:14:34.796Z" tests="1" failures="0" errors="0" time="0.011">
+    <testcase name="still 849.25" time="0.011" classname="TransfersBalancesUnchangedAfterRejectedTransfers"/>
+  </testsuite>
+</testsuites>
