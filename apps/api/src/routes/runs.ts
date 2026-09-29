@@ -1,5 +1,6 @@
 import express, { Router } from "express";
 import type pg from "pg";
+import { rateLimit } from "express-rate-limit";
 import { z } from "zod";
 import { requireIngestToken } from "../lib/auth.js";
 import { JUnitParseError, parseJUnit } from "../lib/junit.js";
@@ -29,7 +30,7 @@ const listQuery = z.object({
 
 const summaryQuery = z.object({ project: slug.optional() });
 
-export function runsRouter(pool: pg.Pool, ingestToken: string): Router {
+export function runsRouter(pool: pg.Pool, ingestToken: string, ingestLimitPerMinute = 30): Router {
   const router = Router();
 
   router.get("/runs", async (req, res) => {
@@ -52,8 +53,18 @@ export function runsRouter(pool: pg.Pool, ingestToken: string): Router {
     res.json(await getSummary(pool, q.data.project));
   });
 
+  // Uploads come from a handful of CI jobs; a tight limit also slows token guessing.
+  const ingestLimiter = rateLimit({
+    windowMs: 60_000,
+    limit: ingestLimitPerMinute,
+    standardHeaders: "draft-8",
+    legacyHeaders: false,
+    message: { error: "too many requests" },
+  });
+
   router.post(
     "/runs",
+    ingestLimiter,
     requireIngestToken(ingestToken),
     express.text({ type: ["application/xml", "text/xml"], limit: "5mb" }),
     async (req, res) => {

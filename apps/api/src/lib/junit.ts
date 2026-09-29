@@ -54,7 +54,10 @@ function seconds(value: unknown): number {
 function message(nodes: unknown): string | null {
   if (!Array.isArray(nodes) || nodes.length === 0) return null;
   const first = asNode(nodes[0]);
-  const text = [str(first.message), str(first["#text"])].filter(Boolean).join("\n");
+  const msg = str(first.message);
+  const body = str(first["#text"]);
+  // Many reporters repeat the message as the first line of the body; don't show it twice.
+  const text = body.startsWith(msg) ? body : [msg, body].filter(Boolean).join("\n");
   return text ? text.slice(0, MAX_MESSAGE_CHARS) : null;
 }
 

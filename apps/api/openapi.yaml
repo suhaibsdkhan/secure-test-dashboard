@@ -1,0 +1,57 @@
+openapi: 3.0.3
+info:
+  title: Test Results Dashboard API
+  version: 0.1.0
+  description: Read test runs, and upload JUnit XML reports from CI.
+servers:
+  - url: http://localhost:8080
+paths:
+  /healthz:
+    get:
+      summary: Liveness and database check
+      responses:
+        "200": { description: OK }
+  /api/summary:
+    get:
+      summary: Projects, pass-rate trend, flaky and slowest tests
+      parameters:
+        - { name: project, in: query, schema: { type: string, example: shop-ui-tests } }
+      responses:
+        "200": { description: Summary }
+  /api/runs:
+    get:
+      summary: List runs, newest first
+      parameters:
+        - { name: project, in: query, schema: { type: string, example: shop-ui-tests } }
+        - { name: limit, in: query, schema: { type: integer, minimum: 1, maximum: 100, default: 25 } }
+        - { name: offset, in: query, schema: { type: integer, minimum: 0, default: 0 } }
+      responses:
+        "200": { description: Runs }
+    post:
+      summary: Upload a JUnit XML report
+      security: [{ bearer: [] }]
+      parameters:
+        - { name: project, in: query, required: true, schema: { type: string, example: shop-ui-tests } }
+        - { name: branch, in: query, schema: { type: string, example: main } }
+        - { name: commit, in: query, schema: { type: string, example: 3f2a9c1 } }
+      requestBody:
+        required: true
+        content:
+          application/xml:
+            schema: { type: string }
+            example: '<testsuite name="smoke"><testcase name="loads" time="0.2"/></testsuite>'
+      responses:
+        "201": { description: Created }
+        "401": { description: Missing or wrong token }
+        "422": { description: Not a valid JUnit report }
+  /api/runs/{id}:
+    get:
+      summary: One run with its test cases
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: string, format: uuid } }
+      responses:
+        "200": { description: Run }
+        "404": { description: Not found }
+components:
+  securitySchemes:
+    bearer: { type: http, scheme: bearer }

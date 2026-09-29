@@ -61,7 +61,8 @@ code, .mono { font-family: var(--mono); font-size: 0.9em; }
 
 .topbar { background: var(--surface); border-bottom: 1px solid var(--border); padding: 0.75rem 1rem; }
 .brand { display: inline-flex; align-items: center; gap: 0.5rem; color: var(--ink); font-weight: 650; }
-.page { max-width: 1100px; margin: 0 auto; padding: 1.5rem 1rem 3rem; display: grid; gap: 1rem; }
+.page { max-width: 1100px; margin: 0 auto; padding: 1.5rem 1rem 3rem; display: grid; grid-template-columns: minmax(0, 1fr); gap: 1rem; }
+.page > *, .two-col > * { min-width: 0; }
 .page-head { display: flex; justify-content: space-between; align-items: center; gap: 1rem; flex-wrap: wrap; }
 .filter { display: inline-flex; gap: 0.5rem; align-items: center; color: var(--ink-2); font-size: 0.9rem; }
 select, .seg button {
@@ -78,12 +79,13 @@ select, .seg button {
 .delta { font-size: 0.85rem; }
 .delta.up { color: var(--good-text); }
 .delta.down { color: var(--bad); }
-.two-col { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1rem; }
+.two-col { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr)); gap: 1rem; }
 
 .list { list-style: none; margin: 0; padding: 0; }
 .list li { display: flex; justify-content: space-between; gap: 1rem; padding: 0.4rem 0; border-top: 1px solid var(--grid); }
 .list li:first-child { border-top: 0; }
 .list .mono { overflow-wrap: anywhere; }
+.list li > :last-child { white-space: nowrap; }
 
 .table-wrap { overflow-x: auto; }
 table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }

@@ -10,7 +10,14 @@ const pool = createPool(config);
 const applied = await migrate(pool);
 if (applied.length) console.log(`Applied migrations: ${applied.join(", ")}`);
 
-const app = createApp({ pool, ingestToken: config.INGEST_TOKEN, staticDir: config.STATIC_DIR });
+const app = createApp({
+  pool,
+  ingestToken: config.INGEST_TOKEN,
+  staticDir: config.STATIC_DIR,
+  trustProxy: config.TRUST_PROXY,
+  readLimitPerMinute: config.RATE_LIMIT_READS_PER_MIN,
+  ingestLimitPerMinute: config.RATE_LIMIT_UPLOADS_PER_MIN,
+});
 const server = app.listen(config.PORT, () => console.log(`API listening on :${config.PORT}`));
 
 for (const signal of ["SIGTERM", "SIGINT"] as const) {
