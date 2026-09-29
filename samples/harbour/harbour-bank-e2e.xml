@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites>
+<testsuite version="3.0.2" name="dev.suhaib.qe.api.AccountApiTest" time="1.69" tests="14" errors="0" skipped="0" failures="0" flakes="0">
+  <testcase name="invalid_deposits(String)[1]" classname="dev.suhaib.qe.api.AccountApiTest" time="0.181">
+  </testcase>
+  <testcase name="invalid_deposits(String)[2]" classname="dev.suhaib.qe.api.AccountApiTest" time="0.11">
+  </testcase>
+  <testcase name="invalid_deposits(String)[3]" classname="dev.suhaib.qe.api.AccountApiTest" time="0.128">
+  </testcase>
+  <testcase name="open_account" classname="dev.suhaib.qe.api.AccountApiTest" time="0.466">
+  </testcase>
+  <testcase name="owner_name_too_long" classname="dev.suhaib.qe.api.AccountApiTest" time="0.032">
+  </testcase>
+  <testcase name="invalid_open_account_requests(String, String, String, String, String)[1]" classname="dev.suhaib.qe.api.AccountApiTest" time="0.057">
+  </testcase>
+  <testcase name="invalid_open_account_requests(String, String, String, String, String)[2]" classname="dev.suhaib.qe.api.AccountApiTest" time="0.064">
+  </testcase>
+  <testcase name="invalid_open_account_requests(String, String, String, String, String)[3]" classname="dev.suhaib.qe.api.AccountApiTest" time="0.053">
+  </testcase>
+  <testcase name="invalid_open_account_requests(String, String, String, String, String)[4]" classname="dev.suhaib.qe.api.AccountApiTest" time="0.071">
+  </testcase>
+  <testcase name="frozen_account_refuses_deposit" classname="dev.suhaib.qe.api.AccountApiTest" time="0.104">
+  </testcase>
+  <testcase name="open_account_without_initial_deposit" classname="dev.suhaib.qe.api.AccountApiTest" time="0.062">
+  </testcase>
+  <testcase name="unknown_account" classname="dev.suhaib.qe.api.AccountApiTest" time="0.035">
+  </testcase>
+  <testcase name="deposit" classname="dev.suhaib.qe.api.AccountApiTest" time="0.169">
+  </testcase>
+  <testcase name="unknown_account_type" classname="dev.suhaib.qe.api.AccountApiTest" time="0.038">
+  </testcase>
+</testsuite>
+<testsuite version="3.0.2" name="dev.suhaib.qe.api.ConcurrencyTest" time="1.791" tests="2" errors="0" skipped="0" failures="0" flakes="0">
+  <testcase name="opposite_transfers_conserve_money" classname="dev.suhaib.qe.api.ConcurrencyTest" time="1.072">
+  </testcase>
+  <testcase name="no_overdraft_under_contention" classname="dev.suhaib.qe.api.ConcurrencyTest" time="0.695">
+  </testcase>
+</testsuite>
+<testsuite version="3.0.2" name="dev.suhaib.qe.api.TransferApiTest" time="2.551" tests="19" errors="0" skipped="0" failures="0" flakes="0">
+  <testcase name="unknown_accounts" classname="dev.suhaib.qe.api.TransferApiTest" time="0.099">
+  </testcase>
+  <testcase name="same_account" classname="dev.suhaib.qe.api.TransferApiTest" time="0.072">
+  </testcase>
+  <testcase name="frozen_accounts" classname="dev.suhaib.qe.api.TransferApiTest" time="0.204">
+  </testcase>
+  <testcase name="malformed_body" classname="dev.suhaib.qe.api.TransferApiTest" time="0.023">
+  </testcase>
+  <testcase name="invalid_amounts(String)[1]" classname="dev.suhaib.qe.api.TransferApiTest" time="0.11">
+  </testcase>
+  <testcase name="invalid_amounts(String)[2]" classname="dev.suhaib.qe.api.TransferApiTest" time="0.125">
+  </testcase>
+  <testcase name="invalid_amounts(String)[3]" classname="dev.suhaib.qe.api.TransferApiTest" time="0.108">
+  </testcase>
+  <testcase name="invalid_amounts(String)[4]" classname="dev.suhaib.qe.api.TransferApiTest" time="0.108">
+  </testcase>
+  <testcase name="transfer_limit_boundaries(String, int, String)[1]" classname="dev.suhaib.qe.api.TransferApiTest" time="0.113">
+  </testcase>
+  <testcase name="transfer_limit_boundaries(String, int, String)[2]" classname="dev.suhaib.qe.api.TransferApiTest" time="0.114">
+  </testcase>
+  <testcase name="transfer_limit_boundaries(String, int, String)[3]" classname="dev.suhaib.qe.api.TransferApiTest" time="0.152">
+  </testcase>
+  <testcase name="transfer_entire_balance" classname="dev.suhaib.qe.api.TransferApiTest" time="0.122">
+  </testcase>
+  <testcase name="successful_transfer" classname="dev.suhaib.qe.api.TransferApiTest" time="0.309">
+  </testcase>
+  <testcase name="rejected_transfer_is_audited" classname="dev.suhaib.qe.api.TransferApiTest" time="0.147">
+  </testcase>
+  <testcase name="insufficient_funds" classname="dev.suhaib.qe.api.TransferApiTest" time="0.174">
+  </testcase>
+  <testcase name="unknown_transfer" classname="dev.suhaib.qe.api.TransferApiTest" time="0.029">
+  </testcase>
+  <testcase name="replay_is_safe" classname="Idempotency-Key" time="0.195">
+  </testcase>
+  <testcase name="key_reuse_with_different_payload" classname="Idempotency-Key" time="0.162">
+  </testcase>
+  <testcase name="replay_of_rejection" classname="Idempotency-Key" time="0.118">
+  </testcase>
+</testsuite>
+<testsuite version="3.0.2" name="dev.suhaib.qe.bdd.RunCucumberTest" time="4.585" tests="11" errors="0" skipped="0" failures="0" flakes="0">
+  <testcase name="Open a chequing account with an initial deposit" classname="RunCucumberTest" time="0.269">
+  </testcase>
+  <testcase name="Deposit into an existing account" classname="RunCucumberTest" time="0.126">
+  </testcase>
+  <testcase name="Example #1.1" classname="RunCucumberTest" time="0.105">
+  </testcase>
+  <testcase name="Example #1.1" classname="RunCucumberTest" time="0.235">
+  </testcase>
+  <testcase name="Example #1.2" classname="RunCucumberTest" time="0.104">
+  </testcase>
+  <testcase name="Example #1.2" classname="RunCucumberTest" time="0.212">
+  </testcase>
+  <testcase name="Example #1.3" classname="RunCucumberTest" time="0.102">
+  </testcase>
+  <testcase name="Example #1.3" classname="RunCucumberTest" time="0.206">
+  </testcase>
+  <testcase name="A frozen account cannot receive deposits" classname="RunCucumberTest" time="0.125">
+  </testcase>
+  <testcase name="Open an account and pay a friend online" classname="RunCucumberTest" time="1.267">
+  </testcase>
+  <testcase name="Overdraft attempt is refused online" classname="RunCucumberTest" time="0.63">
+  </testcase>
+  <testcase name="Successful transfer is double-entry booked" classname="RunCucumberTest" time="0.24">
+  </testcase>
+  <testcase name="Transfers involving a frozen account are rejected" classname="RunCucumberTest" time="0.15">
+  </testcase>
+  <testcase name="Retrying a transfer with the same idempotency key charges once" classname="RunCucumberTest" time="0.378">
+  </testcase>
+</testsuite>
+<testsuite version="3.0.2" name="dev.suhaib.qe.db.DataIntegrityTest" time="0.759" tests="8" errors="0" skipped="0" failures="0" flakes="0">
+  <testcase name="all_transfers_balanced" classname="dev.suhaib.qe.db.DataIntegrityTest" time="0.064">
+  </testcase>
+  <testcase name="rejected_transfer_row" classname="dev.suhaib.qe.db.DataIntegrityTest" time="0.054"/>
+  <testcase name="no_negative_balances" classname="dev.suhaib.qe.db.DataIntegrityTest" time="0.024"/>
+  <testcase name="all_rejections_clean" classname="dev.suhaib.qe.db.DataIntegrityTest" time="0.043"/>
+  <testcase name="transfer_is_double_entry" classname="dev.suhaib.qe.db.DataIntegrityTest" time="0.081"/>
+  <testcase name="api_matches_database" classname="dev.suhaib.qe.db.DataIntegrityTest" time="0.193">
+  </testcase>
+  <testcase name="ledger_reconciles_for_all_accounts" classname="dev.suhaib.qe.db.DataIntegrityTest" time="0.031"/>
+  <testcase name="running_balance_chain" classname="dev.suhaib.qe.db.DataIntegrityTest" time="0.045"/>
+</testsuite>
+<testsuite version="3.0.2" name="dev.suhaib.qe.ui.playwright.AccessibilityTest" time="7.641" tests="2" errors="0" skipped="0" failures="0" flakes="0">
+  <testcase name="page_meets_wcag_aa(Page)" classname="dev.suhaib.qe.ui.playwright.AccessibilityTest" time="4.568">
+  </testcase>
+  <testcase name="error_state_meets_wcag_aa(Page)" classname="dev.suhaib.qe.ui.playwright.AccessibilityTest" time="3.045"/>
+</testsuite>
+<testsuite version="3.0.2" name="dev.suhaib.qe.ui.playwright.PlaywrightBankingTest" time="4.514" tests="5" errors="0" skipped="0" failures="0" flakes="0">
+  <testcase name="open_account(Page)" classname="dev.suhaib.qe.ui.playwright.PlaywrightBankingTest" time="1.952"/>
+  <testcase name="transfer_between_accounts(Page)" classname="dev.suhaib.qe.ui.playwright.PlaywrightBankingTest" time="0.812">
+  </testcase>
+  <testcase name="insufficient_funds_message(Page)" classname="dev.suhaib.qe.ui.playwright.PlaywrightBankingTest" time="0.725">
+  </testcase>
+  <testcase name="ui_deposit_visible_in_api(Page)" classname="dev.suhaib.qe.ui.playwright.PlaywrightBankingTest" time="0.582">
+  </testcase>
+  <testcase name="blank_owner_validation(Page)" classname="dev.suhaib.qe.ui.playwright.PlaywrightBankingTest" time="0.416"/>
+</testsuite>
+<testsuite version="3.0.2" name="dev.suhaib.qe.ui.selenium.SeleniumBankingTest" time="9.013" tests="3" errors="0" skipped="0" failures="0" flakes="0">
+  <testcase name="frozen_account(WebDriver)" classname="dev.suhaib.qe.ui.selenium.SeleniumBankingTest" time="5.43">
+  </testcase>
+  <testcase name="transfer(WebDriver)" classname="dev.suhaib.qe.ui.selenium.SeleniumBankingTest" time="1.802">
+  </testcase>
+  <testcase name="deposit(WebDriver)" classname="dev.suhaib.qe.ui.selenium.SeleniumBankingTest" time="1.219">
+  </testcase>
+</testsuite>
+</testsuites>

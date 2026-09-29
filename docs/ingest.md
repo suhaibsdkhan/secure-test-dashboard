@@ -52,4 +52,8 @@ repo, then append to its test job:
 ```
 
 If a runner writes several XML files (e.g. Surefire), upload each one, or merge them into
-one `<testsuites>` document first.
+one `<testsuites>` document first. The Harbour Bank framework does the latter: its CI
+([`publish-results` job](https://github.com/suhaibsdkhan/Harbour-bank-qe-framework/blob/main/.github/workflows/ci.yml))
+merges the Surefire reports with `scripts/merge-junit.mjs`, which also strips the JVM
+properties and console output Surefire records, and uploads them as `harbour-bank-unit` and
+`harbour-bank-e2e` next to the Newman results as `harbour-bank-postman`.

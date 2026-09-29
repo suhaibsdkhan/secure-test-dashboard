@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites>
+<testsuite version="3.0.2" name="dev.suhaib.bank.transfer.TransferControllerTest" time="3.347" tests="4" errors="0" skipped="0" failures="0" flakes="0">
+  <testcase name="business_rejection_is_422_with_reference" classname="dev.suhaib.bank.transfer.TransferControllerTest" time="0.311">
+  </testcase>
+  <testcase name="replay_is_200" classname="dev.suhaib.bank.transfer.TransferControllerTest" time="0.033"/>
+  <testcase name="validation_errors_are_400_problem_documents" classname="dev.suhaib.bank.transfer.TransferControllerTest" time="0.054"/>
+  <testcase name="new_transfer_is_201_with_location" classname="dev.suhaib.bank.transfer.TransferControllerTest" time="0.01"/>
+</testsuite>
+<testsuite version="3.0.2" name="dev.suhaib.bank.transfer.TransferServiceTest" time="0.664" tests="8" errors="0" skipped="0" failures="0" flakes="0">
+  <testcase name="replay_with_different_payload" classname="dev.suhaib.bank.transfer.TransferServiceTest" time="0.516"/>
+  <testcase name="replay_returns_original" classname="dev.suhaib.bank.transfer.TransferServiceTest" time="0.012"/>
+  <testcase name="locks_in_id_order" classname="dev.suhaib.bank.transfer.TransferServiceTest" time="0.013"/>
+  <testcase name="completes_transfer" classname="dev.suhaib.bank.transfer.TransferServiceTest" time="0.007"/>
+  <testcase name="rejects(String, String, String, ErrorCode)[1]" classname="dev.suhaib.bank.transfer.TransferServiceTest" time="0.023"/>
+  <testcase name="rejects(String, String, String, ErrorCode)[2]" classname="dev.suhaib.bank.transfer.TransferServiceTest" time="0.005"/>
+  <testcase name="rejects(String, String, String, ErrorCode)[3]" classname="dev.suhaib.bank.transfer.TransferServiceTest" time="0.005"/>
+  <testcase name="frozen_payee" classname="dev.suhaib.bank.transfer.TransferServiceTest" time="0.005"/>
+</testsuite>
+</testsuites>

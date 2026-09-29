@@ -2,7 +2,13 @@
 
 A full-stack dashboard for automated test and security-scan results: upload a JUnit XML
 report from any CI job and see pass-rate trends, flaky tests, slow tests and failure output.
-It monitors its own pipeline: every push uploads this repo's unit tests, OWASP ZAP scans and
+
+It tracks two projects. The first is
+**[Harbour Bank](https://github.com/suhaibsdkhan/Harbour-bank-qe-framework)**, a Spring Boot
+banking API with a QE framework (JUnit 5, Cucumber, Rest Assured, Playwright, Selenium,
+Postman/Newman): its CI merges the Surefire reports (unit and end-to-end) and uploads them, plus the Newman results,
+to this dashboard on every run. The second is this dashboard itself, which monitors its own
+pipeline: every push uploads this repo's unit tests, OWASP ZAP scans and
 Trivy image scan (converted to JUnit, one test case per rule or finding), so the dashboard
 shows its own security posture over time.
 
@@ -11,6 +17,8 @@ authenticated active API scan), **dependency scanning** (npm audit, Trivy, GitHu
 review), a **container image scan** and an **infrastructure-as-code scan** as blocking gates,
 and deploys to **AWS with Terraform**. What those scans found and how each finding was fixed
 is written up in **[docs/security-findings.md](docs/security-findings.md)**.
+
+![All projects: Harbour Bank's end-to-end and Postman suites next to this repo's own tests and scans](docs/projects.png)
 
 ![The ZAP baseline suite on the dashboard: four failing checks until the security fixes landed, then clean](docs/dashboard.png)
 
@@ -34,10 +42,15 @@ npm run seed            # load three weeks of demo history
 open http://localhost:8080
 ```
 
-The demo history is built from this repo's real results: `samples/pipeline/` holds the
-actual test, ZAP and Trivy output for three commits (before the security fixes, after
-them, and today), captured with `scripts/scan-commit.sh`. The seed script replays them over
-three weeks with varied timings, so the security suites show the real before-and-after.
+The demo history is built from real results, not invented ones:
+
+- `samples/harbour/` is a real run of the Harbour Bank suites: its 12 unit tests, 67
+  JUnit and Cucumber end-to-end tests (API, SQL, Playwright, Selenium, accessibility) merged
+  from Surefire, and the 29-assertion Newman collection. The seed replays it as a nightly run.
+- `samples/pipeline/` holds this repo's actual test, ZAP and Trivy output for three commits
+  (before the security fixes, after them, and today), captured with `scripts/scan-commit.sh`.
+  The seed replays them over three weeks with varied timings, so the security suites show the
+  real before-and-after.
 
 For development with hot reload: `npm install`, point the API at any Postgres with
 `DATABASE_URL` and set `INGEST_TOKEN` (32+ characters), then `npm run dev:api` and
@@ -92,6 +105,6 @@ infra/terraform AWS infrastructure
 .github         CI, security and deploy workflows; Dependabot
 .zap            ZAP rule exceptions, each justified
 docs            Security write-up, deploy and ingest guides
-samples         Example JUnit reports; pipeline/ holds real results used by the seed
+samples         Example JUnit reports; harbour/ and pipeline/ hold real results used by the seed
 scripts         Demo seeding and per-commit scan capture
 ```

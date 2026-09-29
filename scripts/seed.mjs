@@ -1,13 +1,19 @@
 #!/usr/bin/env node
-// Loads three weeks of demo history built from this repo's real pipeline results.
+// Loads three weeks of demo history built from real test results, for two projects:
 //
-// samples/pipeline/<phase>/ holds the actual unit-test, ZAP and Trivy output (as JUnit) for
-// three commits, captured with scripts/scan-commit.sh:
-//   1-baseline  the first version, before any security fixes
-//   2-hardened  after fixing the ZAP and Trivy findings
-//   3-current   today's main
-// Each phase is replayed as a run per day with jittered durations, so the dashboard shows
-// the real before-and-after rather than invented results.
+// 1. Harbour Bank (github.com/suhaibsdkhan/Harbour-bank-qe-framework), the banking API and
+//    QE framework whose CI publishes here. samples/harbour/ holds one real run of its suites,
+//    merged from Surefire: harbour-bank-unit (Spring unit tests), harbour-bank-e2e (JUnit 5 +
+//    Cucumber API, SQL, Playwright and Selenium tests) and harbour-bank-postman (Newman).
+//    Replayed as a nightly run.
+// 2. This dashboard's own pipeline.
+//    samples/pipeline/<phase>/ holds the actual unit-test, ZAP and Trivy output (as JUnit) for
+//    three commits, captured with scripts/scan-commit.sh:
+//      1-baseline  the first version, before any security fixes
+//      2-hardened  after fixing the ZAP and Trivy findings
+//      3-current   today's main
+//    Each phase is replayed as a run per day with jittered durations, so the dashboard shows
+//    the real before-and-after rather than invented results.
 //
 // Usage: INGEST_TOKEN=... [BASE_URL=http://localhost:8080] node scripts/seed.mjs
 import { readdirSync, readFileSync } from "node:fs";
@@ -31,7 +37,8 @@ function readEnvFile() {
   }
 }
 
-const root = path.join(path.dirname(fileURLToPath(import.meta.url)), "../samples/pipeline");
+const samples = path.join(path.dirname(fileURLToPath(import.meta.url)), "../samples");
+const root = path.join(samples, "pipeline");
 // Days each phase covers, oldest first: 21 days in total.
 const PHASE_DAYS = { "1-baseline": 6, "2-hardened": 5, "3-current": 10 };
 const hex = () => [...crypto.getRandomValues(new Uint8Array(20))].map((b) => b.toString(16).padStart(2, "0")).join("");
@@ -45,8 +52,40 @@ function retime(xml, when) {
     .replace(/ time="([\d.]+)"/g, (_, t) => ` time="${(Number(t) * jitter()).toFixed(3)}"`);
 }
 
-let day = Object.values(PHASE_DAYS).reduce((a, b) => a + b, 0);
 let uploaded = 0;
+async function upload(project, commit, body, label) {
+  let res;
+  for (;;) {
+    res = await fetch(`${base}/api/runs?project=${project}&branch=main&commit=${commit}`, {
+      method: "POST",
+      headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/xml" },
+      body,
+    });
+    if (res.status !== 429) break;
+    const wait = Number(res.headers.get("retry-after") ?? 10);
+    console.log(`Upload rate limit reached; waiting ${wait}s (raise RATE_LIMIT_UPLOADS_PER_MIN to skip this)`);
+    await new Promise((r) => setTimeout(r, wait * 1000));
+  }
+  if (!res.ok) throw new Error(`Upload of ${label} failed: ${res.status} ${await res.text()}`);
+  uploaded++;
+}
+
+const totalDays = Object.values(PHASE_DAYS).reduce((a, b) => a + b, 0);
+
+// Harbour Bank: one nightly regression run per day, a few hours before this repo's runs.
+const harbourDir = path.join(samples, "harbour");
+const harbourFiles = readdirSync(harbourDir).filter((f) => f.endsWith(".xml"));
+for (let day = totalDays; day >= 1; day--) {
+  const commit = hex();
+  const when = new Date(Date.now() - (day - 1) * 86_400_000 - 4 * 3_600_000);
+  for (const [i, file] of harbourFiles.entries()) {
+    const at = new Date(when.getTime() + i * 60_000);
+    const body = retime(readFileSync(path.join(harbourDir, file), "utf8"), at);
+    await upload(file.replace(/\.xml$/, ""), commit, body, `harbour/${file}`);
+  }
+}
+
+let day = totalDays;
 for (const [phase, days] of Object.entries(PHASE_DAYS)) {
   const dir = path.join(root, phase);
   const files = readdirSync(dir).filter((f) => f.endsWith(".xml"));
@@ -56,21 +95,8 @@ for (const [phase, days] of Object.entries(PHASE_DAYS)) {
       const when = new Date(Date.now() - (day - 1) * 86_400_000 - (files.length - i) * 90_000);
       const project = file.replace(/\.xml$/, "");
       const body = retime(readFileSync(path.join(dir, file), "utf8"), when);
-      let res;
-      for (;;) {
-        res = await fetch(`${base}/api/runs?project=${project}&branch=main&commit=${commit}`, {
-          method: "POST",
-          headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/xml" },
-          body,
-        });
-        if (res.status !== 429) break;
-        const wait = Number(res.headers.get("retry-after") ?? 10);
-        console.log(`Upload rate limit reached; waiting ${wait}s (raise RATE_LIMIT_UPLOADS_PER_MIN to skip this)`);
-        await new Promise((r) => setTimeout(r, wait * 1000));
-      }
-      if (!res.ok) throw new Error(`Upload of ${phase}/${file} failed: ${res.status} ${await res.text()}`);
-      uploaded++;
+      await upload(project, commit, body, `${phase}/${file}`);
     }
   }
 }
-console.log(`Seeded ${uploaded} runs from samples/pipeline`);
+console.log(`Seeded ${uploaded} runs from samples/harbour and samples/pipeline`);
