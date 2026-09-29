@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<testsuites name="vitest tests" tests="16" failures="0" errors="0" time="0.435762717">
+    <testsuite name="test/api.test.ts" timestamp="2026-09-29T18:38:52.576Z" hostname="vm" tests="5" failures="0" errors="0" skipped="0" time="0.271500368">
+        <testcase classname="test/api.test.ts" name="API (requires TEST_DATABASE_URL) &gt; reports healthy" time="0.05295594">
+        </testcase>
+        <testcase classname="test/api.test.ts" name="API (requires TEST_DATABASE_URL) &gt; ingests a JUnit report and serves it back" time="0.070552">
+        </testcase>
+        <testcase classname="test/api.test.ts" name="API (requires TEST_DATABASE_URL) &gt; builds a summary with trend and flaky tests" time="0.044648589">
+        </testcase>
+        <testcase classname="test/api.test.ts" name="API (requires TEST_DATABASE_URL) &gt; requires the ingest token" time="0.020483287">
+        </testcase>
+        <testcase classname="test/api.test.ts" name="API (requires TEST_DATABASE_URL) &gt; validates input" time="0.029285468">
+        </testcase>
+    </testsuite>
+    <testsuite name="test/junit.test.ts" timestamp="2026-09-29T18:38:52.580Z" hostname="vm" tests="5" failures="0" errors="0" skipped="0" time="0.016770042">
+        <testcase classname="test/junit.test.ts" name="parseJUnit &gt; parses a &lt;testsuites&gt; report with failures, errors and skips" time="0.009124092">
+        </testcase>
+        <testcase classname="test/junit.test.ts" name="parseJUnit &gt; accepts a single &lt;testsuite&gt; root" time="0.002539156">
+        </testcase>
+        <testcase classname="test/junit.test.ts" name="parseJUnit &gt; flattens nested suites" time="0.000927684">
+        </testcase>
+        <testcase classname="test/junit.test.ts" name="parseJUnit &gt; rejects DOCTYPE declarations (XXE / entity expansion)" time="0.000448111">
+        </testcase>
+        <testcase classname="test/junit.test.ts" name="parseJUnit &gt; rejects documents that are not JUnit" time="0.001433442">
+        </testcase>
+    </testsuite>
+    <testsuite name="test/security.test.ts" timestamp="2026-09-29T18:38:52.582Z" hostname="vm" tests="6" failures="0" errors="0" skipped="0" time="0.147492307">
+        <testcase classname="test/security.test.ts" name="security headers &gt; sets CSP, anti-framing, nosniff and hides the framework" time="0.030956055">
+        </testcase>
+        <testcase classname="test/security.test.ts" name="security headers &gt; applies headers to API responses too" time="0.013738302">
+        </testcase>
+        <testcase classname="test/security.test.ts" name="routing &gt; serves the SPA shell only for HTML navigations" time="0.022816962">
+        </testcase>
+        <testcase classname="test/security.test.ts" name="routing &gt; serves a real robots.txt" time="0.00763359">
+        </testcase>
+        <testcase classname="test/security.test.ts" name="error handling &gt; does not leak internal error details" time="0.00884512">
+        </testcase>
+        <testcase classname="test/security.test.ts" name="rate limiting &gt; limits uploads per client" time="0.061118719">
+        </testcase>
+    </testsuite>
+</testsuites>

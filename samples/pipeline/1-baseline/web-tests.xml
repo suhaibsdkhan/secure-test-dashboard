@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<testsuites name="vitest tests" tests="3" failures="0" errors="0" time="0.041930408">
+    <testsuite name="src/api.test.ts" timestamp="2026-09-29T18:33:28.198Z" hostname="vm" tests="2" failures="0" errors="0" skipped="0" time="0.003933417">
+        <testcase classname="src/api.test.ts" name="formatting helpers &gt; excludes skipped tests from the pass rate" time="0.001927445">
+        </testcase>
+        <testcase classname="src/api.test.ts" name="formatting helpers &gt; formats durations and percentages" time="0.000422331">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/components/StatusBadge.test.tsx" timestamp="2026-09-29T18:33:28.199Z" hostname="vm" tests="1" failures="0" errors="0" skipped="0" time="0.037996991">
+        <testcase classname="src/components/StatusBadge.test.tsx" name="labels status with text, not colour alone" time="0.034290207">
+        </testcase>
+    </testsuite>
+</testsuites>

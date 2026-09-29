@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites name="zap-api">
+  <testsuite name="zap-api" tests="114" failures="0" skipped="1">
+    <testcase classname="zap.0" name="Directory Browsing [0]" time="0"/>
+    <testcase classname="zap.10003" name="Vulnerable JS Library (Powered by Retire.js) [10003]" time="0"/>
+    <testcase classname="zap.100043" name="Swagger UI Secret &amp; Vulnerability Detector [100043]" time="0"/>
+    <testcase classname="zap.10009" name="In Page Banner Information Leak [10009]" time="0"/>
+    <testcase classname="zap.10010" name="Cookie No HttpOnly Flag [10010]" time="0"/>
+    <testcase classname="zap.10011" name="Cookie Without Secure Flag [10011]" time="0"/>
+    <testcase classname="zap.10015" name="Re-examine Cache-control Directives [10015]" time="0"/>
+    <testcase classname="zap.10017" name="Cross-Domain JavaScript Source File Inclusion [10017]" time="0"/>
+    <testcase classname="zap.10019" name="Content-Type Header Missing [10019]" time="0"/>
+    <testcase classname="zap.10020" name="Anti-clickjacking Header [10020]" time="0"/>
+    <testcase classname="zap.10021" name="X-Content-Type-Options Header Missing [10021]" time="0"/>
+    <testcase classname="zap.10023" name="Information Disclosure - Debug Error Messages [10023]" time="0"/>
+    <testcase classname="zap.10024" name="Information Disclosure - Sensitive Information in URL [10024]" time="0"/>
+    <testcase classname="zap.10025" name="Information Disclosure - Sensitive Information in HTTP Referrer Header [10025]" time="0"/>
+    <testcase classname="zap.10027" name="Information Disclosure - Suspicious Comments [10027]" time="0"/>
+    <testcase classname="zap.10028" name="Off-site Redirect [10028]" time="0"/>
+    <testcase classname="zap.10029" name="Cookie Poisoning [10029]" time="0"/>
+    <testcase classname="zap.10030" name="User Controllable Charset [10030]" time="0"/>
+    <testcase classname="zap.10031" name="User Controllable HTML Element Attribute (Potential XSS) [10031]" time="0"/>
+    <testcase classname="zap.10032" name="Viewstate [10032]" time="0"/>
+    <testcase classname="zap.10033" name="Directory Browsing [10033]" time="0"/>
+    <testcase classname="zap.10034" name="Heartbleed OpenSSL Vulnerability (Indicative) [10034]" time="0"/>
+    <testcase classname="zap.10035" name="Strict-Transport-Security Header [10035]" time="0"/>
+    <testcase classname="zap.10036" name="HTTP Server Response Header [10036]" time="0"/>
+    <testcase classname="zap.10037" name="Server Leaks Information via &quot;X-Powered-By&quot; HTTP Response Header Field(s) [10037]" time="0"/>
+    <testcase classname="zap.10038" name="Content Security Policy (CSP) Header Not Set [10038]" time="0"/>
+    <testcase classname="zap.10039" name="X-Backend-Server Header Information Leak [10039]" time="0"/>
+    <testcase classname="zap.10040" name="Secure Pages Include Mixed Content [10040]" time="0"/>
+    <testcase classname="zap.10041" name="HTTP to HTTPS Insecure Transition in Form Post [10041]" time="0"/>
+    <testcase classname="zap.10042" name="HTTPS to HTTP Insecure Transition in Form Post [10042]" time="0"/>
+    <testcase classname="zap.10043" name="User Controllable JavaScript Event (XSS) [10043]" time="0"/>
+    <testcase classname="zap.10044" name="Big Redirect Detected (Potential Sensitive Information Leak) [10044]" time="0"/>
+    <testcase classname="zap.10045" name="Source Code Disclosure - /WEB-INF Folder [10045]" time="0"/>
+    <testcase classname="zap.10047" name="HTTPS Content Available via HTTP [10047]" time="0"/>
+    <testcase classname="zap.10048" name="Remote Code Execution - Shell Shock [10048]" time="0"/>
+    <testcase classname="zap.10050" name="Retrieved from Cache [10050]" time="0"/>
+    <testcase classname="zap.10052" name="X-ChromeLogger-Data (XCOLD) Header Information Leak [10052]" time="0"/>
+    <testcase classname="zap.10054" name="Cookie without SameSite Attribute [10054]" time="0"/>
+    <testcase classname="zap.10055" name="CSP [10055]" time="0"/>
+    <testcase classname="zap.10056" name="X-Debug-Token Information Leak [10056]" time="0"/>
+    <testcase classname="zap.10057" name="Username Hash Found [10057]" time="0"/>
+    <testcase classname="zap.10058" name="GET for POST [10058]" time="0"/>
+    <testcase classname="zap.10061" name="X-AspNet-Version Response Header [10061]" time="0"/>
+    <testcase classname="zap.10062" name="PII Disclosure [10062]" time="0"/>
+    <testcase classname="zap.10096" name="Timestamp Disclosure [10096]" time="0"/>
+    <testcase classname="zap.10097" name="Hash Disclosure [10097]" time="0"/>
+    <testcase classname="zap.10098" name="Cross-Domain Misconfiguration [10098]" time="0"/>
+    <testcase classname="zap.10104" name="User Agent Fuzzer [10104]" time="0"/>
+    <testcase classname="zap.10105" name="Weak Authentication Method [10105]" time="0"/>
+    <testcase classname="zap.10106" name="HTTP Only Site [10106]" time="0"/>
+    <testcase classname="zap.10108" name="Reverse Tabnabbing [10108]" time="0"/>
+    <testcase classname="zap.10109" name="Modern Web Application [10109]" time="0"/>
+    <testcase classname="zap.10111" name="Authentication Request Identified [10111]" time="0"/>
+    <testcase classname="zap.10112" name="Session Management Response Identified [10112]" time="0"/>
+    <testcase classname="zap.10113" name="Verification Request Identified [10113]" time="0"/>
+    <testcase classname="zap.10115" name="Script Served From Malicious Domain (polyfill) [10115]" time="0"/>
+    <testcase classname="zap.10116" name="ZAP is Out of Date [10116]" time="0"/>
+    <testcase classname="zap.10202" name="Absence of Anti-CSRF Tokens [10202]" time="0"/>
+    <testcase classname="zap.2" name="Private IP Disclosure [2]" time="0"/>
+    <testcase classname="zap.20015" name="Heartbleed OpenSSL Vulnerability [20015]" time="0"/>
+    <testcase classname="zap.20017" name="Source Code Disclosure - CVE-2012-1823 [20017]" time="0"/>
+    <testcase classname="zap.20018" name="Remote Code Execution - CVE-2012-1823 [20018]" time="0"/>
+    <testcase classname="zap.20019" name="External Redirect [20019]" time="0"/>
+    <testcase classname="zap.3" name="Session ID in URL Rewrite [3]" time="0"/>
+    <testcase classname="zap.30001" name="Buffer Overflow [30001]" time="0"/>
+    <testcase classname="zap.30002" name="Format String Error [30002]" time="0"/>
+    <testcase classname="zap.40003" name="CRLF Injection [40003]" time="0"/>
+    <testcase classname="zap.40008" name="Parameter Tampering [40008]" time="0"/>
+    <testcase classname="zap.40009" name="Server Side Include [40009]" time="0"/>
+    <testcase classname="zap.40012" name="Cross Site Scripting (Reflected) [40012]" time="0"/>
+    <testcase classname="zap.40014" name="Cross Site Scripting (Persistent) [40014]" time="0"/>
+    <testcase classname="zap.40016" name="Cross Site Scripting (Persistent) - Prime [40016]" time="0"/>
+    <testcase classname="zap.40017" name="Cross Site Scripting (Persistent) - Spider [40017]" time="0"/>
+    <testcase classname="zap.40018" name="SQL Injection [40018]" time="0"/>
+    <testcase classname="zap.40019" name="SQL Injection - MySQL (Time Based) [40019]" time="0"/>
+    <testcase classname="zap.40020" name="SQL Injection - Hypersonic SQL (Time Based) [40020]" time="0"/>
+    <testcase classname="zap.40021" name="SQL Injection - Oracle (Time Based) [40021]" time="0"/>
+    <testcase classname="zap.40022" name="SQL Injection - PostgreSQL (Time Based) [40022]" time="0"/>
+    <testcase classname="zap.40026" name="Cross Site Scripting (DOM Based) [40026]" time="0"/>
+    <testcase classname="zap.40027" name="SQL Injection - MsSQL (Time Based) [40027]" time="0"/>
+    <testcase classname="zap.40028" name="ELMAH Information Leak [40028]" time="0"/>
+    <testcase classname="zap.40029" name="Trace.axd Information Leak [40029]" time="0"/>
+    <testcase classname="zap.40032" name=".htaccess Information Leak [40032]" time="0"/>
+    <testcase classname="zap.40034" name=".env Information Leak [40034]" time="0"/>
+    <testcase classname="zap.40035" name="Hidden File Finder [40035]" time="0"/>
+    <testcase classname="zap.40042" name="Spring Actuator Information Leak [40042]" time="0"/>
+    <testcase classname="zap.40043" name="Log4Shell [40043]" time="0"/>
+    <testcase classname="zap.40044" name="Exponential Entity Expansion (Billion Laughs Attack) [40044]" time="0"/>
+    <testcase classname="zap.40045" name="Spring4Shell [40045]" time="0"/>
+    <testcase classname="zap.40048" name="Remote Code Execution (React2Shell) [40048]" time="0"/>
+    <testcase classname="zap.50000" name="Script Active Scan Rules [50000]" time="0"/>
+    <testcase classname="zap.50001" name="Script Passive Scan Rules [50001]" time="0"/>
+    <testcase classname="zap.6" name="Path Traversal [6]" time="0"/>
+    <testcase classname="zap.7" name="Remote File Inclusion [7]" time="0"/>
+    <testcase classname="zap.90001" name="Insecure JSF ViewState [90001]" time="0"/>
+    <testcase classname="zap.90002" name="Java Serialization Object [90002]" time="0"/>
+    <testcase classname="zap.90003" name="Sub Resource Integrity Attribute Missing [90003]" time="0"/>
+    <testcase classname="zap.90011" name="Charset Mismatch [90011]" time="0"/>
+    <testcase classname="zap.90017" name="XSLT Injection [90017]" time="0"/>
+    <testcase classname="zap.90019" name="Server Side Code Injection [90019]" time="0"/>
+    <testcase classname="zap.90020" name="Remote OS Command Injection [90020]" time="0"/>
+    <testcase classname="zap.90021" name="XPath Injection [90021]" time="0"/>
+    <testcase classname="zap.90022" name="Application Error Disclosure [90022]" time="0"/>
+    <testcase classname="zap.90023" name="XML External Entity Attack [90023]" time="0"/>
+    <testcase classname="zap.90024" name="Generic Padding Oracle [90024]" time="0"/>
+    <testcase classname="zap.90026" name="SOAP Action Spoofing [90026]" time="0"/>
+    <testcase classname="zap.90029" name="SOAP XML Injection [90029]" time="0"/>
+    <testcase classname="zap.90030" name="WSDL File Detection [90030]" time="0"/>
+    <testcase classname="zap.90033" name="Loosely Scoped Cookie [90033]" time="0"/>
+    <testcase classname="zap.90034" name="Cloud Metadata Potentially Exposed [90034]" time="0"/>
+    <testcase classname="zap.90035" name="Server Side Template Injection [90035]" time="0"/>
+    <testcase classname="zap.90036" name="Server Side Template Injection (Blind) [90036]" time="0"/>
+    <testcase classname="zap.90037" name="Remote OS Command Injection (Time Based) [90037]" time="0"/>
+    <testcase classname="zap.100001" name="Unexpected Content-Type was returned [100001]" time="0"><skipped message="IGNORE-NEW: 6 instance(s)">http://127.0.0.1:18080 (200 OK)
+http://127.0.0.1:18080/?-s (200 OK)
+http://127.0.0.1:18080/ (200 OK)
+http://127.0.0.1:18080/assets/index-BbO_XusT.css (200 OK)
+http://127.0.0.1:18080/assets/index-DQ5njBPQ.js (200 OK)
+</skipped></testcase>
+  </testsuite>
+</testsuites>

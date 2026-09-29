@@ -50,68 +50,88 @@ export function Dashboard() {
         </label>
       </div>
 
-      <section className="tiles">
-        <div className="tile">
-          <span className="tile-label">Latest pass rate</span>
-          <span className="tile-value">{formatPct(rate)}</span>
-          {delta != null &&
-            (Math.abs(delta) < 0.0005 ? (
-              <span className="tile-sub">Same as previous run</span>
-            ) : (
-              <span className={delta < 0 ? "delta down" : "delta up"}>
-                {delta < 0 ? "▼" : "▲"} {formatPct(Math.abs(delta))} vs previous run
-              </span>
-            ))}
-        </div>
-        <div className="tile">
-          <span className="tile-label">Failing in latest run</span>
-          <span className="tile-value">{latest ? latest.failed + latest.errored : 0}</span>
-          <span className="tile-sub">of {latest?.total ?? 0} tests</span>
-        </div>
-        <div className="tile">
-          <span className="tile-label">Average pass rate</span>
-          <span className="tile-value">{formatPct(avgRate)}</span>
-          <span className="tile-sub">last {trend.length} runs</span>
-        </div>
-      </section>
+      {!project ? (
+        <section className="projects">
+          {projects.map((p) => {
+            const failing = p.failed + p.errored;
+            return (
+              <Link key={p.project} className="tile project-tile" to={`/?project=${encodeURIComponent(p.project)}`}>
+                <span className="tile-label">{p.project}</span>
+                <span className="tile-value">{formatPct(passRate(p))}</span>
+                <span className={failing ? "tile-sub text-bad" : "tile-sub"}>
+                  {failing ? `${failing} failing` : "All passing"} of {p.total} · {p.runs} runs
+                </span>
+                <span className="tile-sub">Last run {formatDate(p.last_run)}</span>
+              </Link>
+            );
+          })}
+        </section>
+      ) : (
+        <>
+        <section className="tiles">
+          <div className="tile">
+            <span className="tile-label">Latest pass rate</span>
+            <span className="tile-value">{formatPct(rate)}</span>
+            {delta != null &&
+              (Math.abs(delta) < 0.0005 ? (
+                <span className="tile-sub">Same as previous run</span>
+              ) : (
+                <span className={delta < 0 ? "delta down" : "delta up"}>
+                  {delta < 0 ? "▼" : "▲"} {formatPct(Math.abs(delta))} vs previous run
+                </span>
+              ))}
+          </div>
+          <div className="tile">
+            <span className="tile-label">Failing in latest run</span>
+            <span className="tile-value">{latest ? latest.failed + latest.errored : 0}</span>
+            <span className="tile-sub">of {latest?.total ?? 0} tests</span>
+          </div>
+          <div className="tile">
+            <span className="tile-label">Average pass rate</span>
+            <span className="tile-value">{formatPct(avgRate)}</span>
+            <span className="tile-sub">last {trend.length} runs</span>
+          </div>
+        </section>
 
-      <section className="card">
-        <h2>Outcomes per run</h2>
-        <TrendChart points={trend} />
-      </section>
-
-      <div className="two-col">
         <section className="card">
-          <h2>Flaky tests</h2>
-          <p className="hint">Flipped between pass and fail at least twice on one branch in the last 30 days.</p>
-          {flaky.length === 0 ? (
-            <p className="muted">None detected.</p>
-          ) : (
+          <h2>Outcomes per run</h2>
+          <TrendChart points={trend} />
+        </section>
+
+        <div className="two-col">
+          <section className="card">
+            <h2>Flaky tests</h2>
+            <p className="hint">Flipped between pass and fail at least twice on one branch in the last 30 days.</p>
+            {flaky.length === 0 ? (
+              <p className="muted">None detected.</p>
+            ) : (
+              <ul className="list">
+                {flaky.map((f) => (
+                  <li key={`${f.suite}/${f.name}`}>
+                    <span className="mono">{f.name}</span>
+                    <span className="muted">
+                      {f.failures}/{f.samples} failed
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </section>
+          <section className="card">
+            <h2>Slowest tests</h2>
+            <p className="hint">Average duration over the last 30 days.</p>
             <ul className="list">
-              {flaky.map((f) => (
-                <li key={`${f.suite}/${f.name}`}>
-                  <span className="mono">{f.name}</span>
-                  <span className="muted">
-                    {f.failures}/{f.samples} failed
-                  </span>
+              {slowest.map((s) => (
+                <li key={`${s.suite}/${s.name}`}>
+                  <span className="mono">{s.name}</span>
+                  <span className="muted num">{formatDuration(s.avg_ms)}</span>
                 </li>
               ))}
             </ul>
-          )}
-        </section>
-        <section className="card">
-          <h2>Slowest tests</h2>
-          <p className="hint">Average duration over the last 30 days.</p>
-          <ul className="list">
-            {slowest.map((s) => (
-              <li key={`${s.suite}/${s.name}`}>
-                <span className="mono">{s.name}</span>
-                <span className="muted num">{formatDuration(s.avg_ms)}</span>
-              </li>
-            ))}
-          </ul>
-        </section>
-      </div>
+          </section>
+        </div>
+        </>
+      )}
 
       <section className="card">
         <h2>Recent runs</h2>

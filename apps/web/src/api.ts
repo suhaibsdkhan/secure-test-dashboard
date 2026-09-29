@@ -25,7 +25,10 @@ export interface TestCase {
 }
 
 export interface Summary {
-  projects: { project: string; runs: number; last_run: string }[];
+  projects: ({ project: string; runs: number; last_run: string; last_run_id: string } & Pick<
+    Run,
+    "total" | "passed" | "failed" | "errored" | "skipped"
+  >)[];
   trend: Pick<Run, "id" | "project" | "started_at" | "total" | "passed" | "failed" | "errored" | "skipped">[];
   slowest: { suite: string; name: string; avg_ms: number; samples: number }[];
   flaky: { suite: string; name: string; failures: number; samples: number }[];

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites name="trivy-image">
+  <testsuite name="trivy-image" tests="8" failures="7" skipped="0" timestamp="2026-09-29T18:34:29.068773812Z">
+    <testcase classname="app (debian 12.13)" name="app (debian 12.13) has no HIGH+ findings" time="0"><failure message="6 finding(s)"></failure></testcase>
+    <testcase classname="app (debian 12.13)" name="CVE-2026-31789 in libssl3 3.0.18-1~deb12u2" time="0"><failure message="CRITICAL: openssl: OpenSSL: Heap buffer overflow on 32-bit systems from large X.509 certificate processing">Fixed in 3.0.19-1~deb12u2</failure></testcase>
+    <testcase classname="app (debian 12.13)" name="CVE-2026-28387 in libssl3 3.0.18-1~deb12u2" time="0"><failure message="HIGH: openssl: OpenSSL: Arbitrary code execution due to use-after-free in DANE TLSA authentication">Fixed in 3.0.19-1~deb12u2</failure></testcase>
+    <testcase classname="app (debian 12.13)" name="CVE-2026-28388 in libssl3 3.0.18-1~deb12u2" time="0"><failure message="HIGH: openssl: OpenSSL: Denial of Service due to NULL pointer dereference in delta CRL processing">Fixed in 3.0.19-1~deb12u2</failure></testcase>
+    <testcase classname="app (debian 12.13)" name="CVE-2026-28389 in libssl3 3.0.18-1~deb12u2" time="0"><failure message="HIGH: openssl: OpenSSL: Denial of Service vulnerability in CMS processing">Fixed in 3.0.19-1~deb12u2</failure></testcase>
+    <testcase classname="app (debian 12.13)" name="CVE-2026-28390 in libssl3 3.0.18-1~deb12u2" time="0"><failure message="HIGH: openssl: OpenSSL: Denial of Service due to NULL pointer dereference in CMS EnvelopedData processing">Fixed in 3.0.19-1~deb12u2</failure></testcase>
+    <testcase classname="app (debian 12.13)" name="CVE-2026-45447 in libssl3 3.0.18-1~deb12u2" time="0"><failure message="HIGH: openssl: Heap Use-After-Free in OpenSSL PKCS7_verify()">Fixed in 3.0.20-1~deb12u2</failure></testcase>
+    <testcase classname="Node.js" name="Node.js has no HIGH+ findings" time="0"/>
+  </testsuite>
+</testsuites>

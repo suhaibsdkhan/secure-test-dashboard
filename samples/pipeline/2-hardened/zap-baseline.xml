@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites name="zap-baseline">
+  <testsuite name="zap-baseline" tests="61" failures="0" skipped="2">
+    <testcase classname="zap.10003" name="Vulnerable JS Library (Powered by Retire.js) [10003]" time="0"/>
+    <testcase classname="zap.10009" name="In Page Banner Information Leak [10009]" time="0"/>
+    <testcase classname="zap.10010" name="Cookie No HttpOnly Flag [10010]" time="0"/>
+    <testcase classname="zap.10011" name="Cookie Without Secure Flag [10011]" time="0"/>
+    <testcase classname="zap.10015" name="Re-examine Cache-control Directives [10015]" time="0"/>
+    <testcase classname="zap.10017" name="Cross-Domain JavaScript Source File Inclusion [10017]" time="0"/>
+    <testcase classname="zap.10019" name="Content-Type Header Missing [10019]" time="0"/>
+    <testcase classname="zap.10020" name="Anti-clickjacking Header [10020]" time="0"/>
+    <testcase classname="zap.10021" name="X-Content-Type-Options Header Missing [10021]" time="0"/>
+    <testcase classname="zap.10023" name="Information Disclosure - Debug Error Messages [10023]" time="0"/>
+    <testcase classname="zap.10024" name="Information Disclosure - Sensitive Information in URL [10024]" time="0"/>
+    <testcase classname="zap.10025" name="Information Disclosure - Sensitive Information in HTTP Referrer Header [10025]" time="0"/>
+    <testcase classname="zap.10028" name="Off-site Redirect [10028]" time="0"/>
+    <testcase classname="zap.10029" name="Cookie Poisoning [10029]" time="0"/>
+    <testcase classname="zap.10030" name="User Controllable Charset [10030]" time="0"/>
+    <testcase classname="zap.10031" name="User Controllable HTML Element Attribute (Potential XSS) [10031]" time="0"/>
+    <testcase classname="zap.10032" name="Viewstate [10032]" time="0"/>
+    <testcase classname="zap.10033" name="Directory Browsing [10033]" time="0"/>
+    <testcase classname="zap.10034" name="Heartbleed OpenSSL Vulnerability (Indicative) [10034]" time="0"/>
+    <testcase classname="zap.10035" name="Strict-Transport-Security Header [10035]" time="0"/>
+    <testcase classname="zap.10036" name="HTTP Server Response Header [10036]" time="0"/>
+    <testcase classname="zap.10037" name="Server Leaks Information via &quot;X-Powered-By&quot; HTTP Response Header Field(s) [10037]" time="0"/>
+    <testcase classname="zap.10038" name="Content Security Policy (CSP) Header Not Set [10038]" time="0"/>
+    <testcase classname="zap.10039" name="X-Backend-Server Header Information Leak [10039]" time="0"/>
+    <testcase classname="zap.10040" name="Secure Pages Include Mixed Content [10040]" time="0"/>
+    <testcase classname="zap.10041" name="HTTP to HTTPS Insecure Transition in Form Post [10041]" time="0"/>
+    <testcase classname="zap.10042" name="HTTPS to HTTP Insecure Transition in Form Post [10042]" time="0"/>
+    <testcase classname="zap.10043" name="User Controllable JavaScript Event (XSS) [10043]" time="0"/>
+    <testcase classname="zap.10044" name="Big Redirect Detected (Potential Sensitive Information Leak) [10044]" time="0"/>
+    <testcase classname="zap.10050" name="Retrieved from Cache [10050]" time="0"/>
+    <testcase classname="zap.10052" name="X-ChromeLogger-Data (XCOLD) Header Information Leak [10052]" time="0"/>
+    <testcase classname="zap.10054" name="Cookie without SameSite Attribute [10054]" time="0"/>
+    <testcase classname="zap.10055" name="CSP [10055]" time="0"/>
+    <testcase classname="zap.10056" name="X-Debug-Token Information Leak [10056]" time="0"/>
+    <testcase classname="zap.10057" name="Username Hash Found [10057]" time="0"/>
+    <testcase classname="zap.10061" name="X-AspNet-Version Response Header [10061]" time="0"/>
+    <testcase classname="zap.10062" name="PII Disclosure [10062]" time="0"/>
+    <testcase classname="zap.10096" name="Timestamp Disclosure [10096]" time="0"/>
+    <testcase classname="zap.10097" name="Hash Disclosure [10097]" time="0"/>
+    <testcase classname="zap.10098" name="Cross-Domain Misconfiguration [10098]" time="0"/>
+    <testcase classname="zap.10105" name="Weak Authentication Method [10105]" time="0"/>
+    <testcase classname="zap.10108" name="Reverse Tabnabbing [10108]" time="0"/>
+    <testcase classname="zap.10111" name="Authentication Request Identified [10111]" time="0"/>
+    <testcase classname="zap.10112" name="Session Management Response Identified [10112]" time="0"/>
+    <testcase classname="zap.10113" name="Verification Request Identified [10113]" time="0"/>
+    <testcase classname="zap.10115" name="Script Served From Malicious Domain (polyfill) [10115]" time="0"/>
+    <testcase classname="zap.10116" name="ZAP is Out of Date [10116]" time="0"/>
+    <testcase classname="zap.10202" name="Absence of Anti-CSRF Tokens [10202]" time="0"/>
+    <testcase classname="zap.2" name="Private IP Disclosure [2]" time="0"/>
+    <testcase classname="zap.3" name="Session ID in URL Rewrite [3]" time="0"/>
+    <testcase classname="zap.50001" name="Script Passive Scan Rules [50001]" time="0"/>
+    <testcase classname="zap.50003" name="Stats Passive Scan Rule [50003]" time="0"/>
+    <testcase classname="zap.90001" name="Insecure JSF ViewState [90001]" time="0"/>
+    <testcase classname="zap.90002" name="Java Serialization Object [90002]" time="0"/>
+    <testcase classname="zap.90003" name="Sub Resource Integrity Attribute Missing [90003]" time="0"/>
+    <testcase classname="zap.90011" name="Charset Mismatch [90011]" time="0"/>
+    <testcase classname="zap.90022" name="Application Error Disclosure [90022]" time="0"/>
+    <testcase classname="zap.90030" name="WSDL File Detection [90030]" time="0"/>
+    <testcase classname="zap.90033" name="Loosely Scoped Cookie [90033]" time="0"/>
+    <testcase classname="zap.10027" name="Information Disclosure - Suspicious Comments [10027]" time="0"><skipped message="IGNORE: 1 instance(s)">http://127.0.0.1:18080/assets/index-DQ5njBPQ.js (200 OK)
+</skipped></testcase>
+    <testcase classname="zap.10109" name="Modern Web Application [10109]" time="0"><skipped message="IGNORE: 4 instance(s)">http://127.0.0.1:18080 (200 OK)
+http://127.0.0.1:18080/ (200 OK)
+http://127.0.0.1:18080/runs/64b56ecd-eb01-4add-8d9d-470c58c3b153 (200 OK)
+http://127.0.0.1:18080/runs/a5793584-767c-48e0-bd52-9e30f98ca94d (200 OK)
+</skipped></testcase>
+  </testsuite>
+</testsuites>

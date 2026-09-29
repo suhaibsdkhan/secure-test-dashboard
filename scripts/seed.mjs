@@ -1,7 +1,18 @@
 #!/usr/bin/env node
-// Uploads synthetic JUnit reports so the dashboard has history to show.
+// Loads three weeks of demo history built from this repo's real pipeline results.
+//
+// samples/pipeline/<phase>/ holds the actual unit-test, ZAP and Trivy output (as JUnit) for
+// three commits, captured with scripts/scan-commit.sh:
+//   1-baseline  the first version, before any security fixes
+//   2-hardened  after fixing the ZAP and Trivy findings
+//   3-current   today's main
+// Each phase is replayed as a run per day with jittered durations, so the dashboard shows
+// the real before-and-after rather than invented results.
+//
 // Usage: INGEST_TOKEN=... [BASE_URL=http://localhost:8080] node scripts/seed.mjs
-import { readFileSync } from "node:fs";
+import { readdirSync, readFileSync } from "node:fs";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 
 const base = process.env.BASE_URL ?? "http://localhost:8080";
 const token = process.env.INGEST_TOKEN ?? readEnvFile().INGEST_TOKEN;
@@ -20,41 +31,46 @@ function readEnvFile() {
   }
 }
 
-const tests = [
-  ["tests.test_login", "test_valid_login_redirects_to_dashboard", 4.1, 0.0],
-  ["tests.test_login", "test_invalid_password_shows_error", 3.9, 0.25],
-  ["tests.test_login", "test_locked_account_message", 4.2, 0.0],
-  ["tests.test_search", "test_search_returns_results", 2.8, 0.0],
-  ["tests.test_search", "test_search_filters_by_price", 5.6, 0.05],
-  ["tests.test_checkout", "test_add_item_to_cart", 6.1, 0.0],
-  ["tests.test_checkout", "test_apply_discount_code", 7.8, 0.1],
-  ["tests.test_checkout", "test_checkout_with_saved_card", 16.4, 0.2],
-  ["tests.test_api", "test_get_products_returns_200", 0.4, 0.0],
-  ["tests.test_api", "test_create_order_requires_auth", 0.6, 0.0],
-];
-
-const esc = (s) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/"/g, "&quot;");
+const root = path.join(path.dirname(fileURLToPath(import.meta.url)), "../samples/pipeline");
+// Days each phase covers, oldest first: 21 days in total.
+const PHASE_DAYS = { "1-baseline": 6, "2-hardened": 5, "3-current": 10 };
 const hex = () => [...crypto.getRandomValues(new Uint8Array(20))].map((b) => b.toString(16).padStart(2, "0")).join("");
 
-for (let day = 13; day >= 0; day--) {
-  const started = new Date(Date.now() - day * 86_400_000 - 3_600_000);
-  const cases = tests.map(([cls, name, time, failRate]) => {
-    const t = (time * (0.85 + Math.random() * 0.3)).toFixed(3);
-    if (Math.random() < failRate) {
-      const err = name.includes("saved_card");
-      const tag = err ? "error" : "failure";
-      const msg = err ? "WebDriverException: chrome not reachable" : `AssertionError in ${name}`;
-      return `<testcase classname="${cls}" name="${name}" time="${t}"><${tag} message="${esc(msg)}">${esc(msg)}</${tag}></testcase>`;
-    }
-    return `<testcase classname="${cls}" name="${name}" time="${t}"/>`;
-  });
-  cases.push(`<testcase classname="tests.test_checkout" name="test_paypal_checkout" time="0"><skipped message="sandbox unavailable"/></testcase>`);
-  const xml = `<?xml version="1.0"?><testsuites name="ui-regression"><testsuite name="regression" timestamp="${started.toISOString()}">${cases.join("")}</testsuite></testsuites>`;
-  const res = await fetch(`${base}/api/runs?project=shop-ui-tests&branch=main&commit=${hex()}`, {
-    method: "POST",
-    headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/xml" },
-    body: xml,
-  });
-  if (!res.ok) throw new Error(`Upload failed: ${res.status} ${await res.text()}`);
+// Put the run at `when` and scale every duration by a small random factor.
+function retime(xml, when) {
+  const jitter = () => 0.8 + Math.random() * 0.4;
+  return xml
+    .replace(/ timestamp="[^"]*"/g, "")
+    .replace(/<testsuites\b/, `<testsuites timestamp="${when.toISOString()}"`)
+    .replace(/ time="([\d.]+)"/g, (_, t) => ` time="${(Number(t) * jitter()).toFixed(3)}"`);
 }
-console.log("Seeded 14 runs for project shop-ui-tests");
+
+let day = Object.values(PHASE_DAYS).reduce((a, b) => a + b, 0);
+let uploaded = 0;
+for (const [phase, days] of Object.entries(PHASE_DAYS)) {
+  const dir = path.join(root, phase);
+  const files = readdirSync(dir).filter((f) => f.endsWith(".xml"));
+  for (let d = 0; d < days; d++, day--) {
+    const commit = hex();
+    for (const [i, file] of files.entries()) {
+      const when = new Date(Date.now() - (day - 1) * 86_400_000 - (files.length - i) * 90_000);
+      const project = file.replace(/\.xml$/, "");
+      const body = retime(readFileSync(path.join(dir, file), "utf8"), when);
+      let res;
+      for (;;) {
+        res = await fetch(`${base}/api/runs?project=${project}&branch=main&commit=${commit}`, {
+          method: "POST",
+          headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/xml" },
+          body,
+        });
+        if (res.status !== 429) break;
+        const wait = Number(res.headers.get("retry-after") ?? 10);
+        console.log(`Upload rate limit reached; waiting ${wait}s (raise RATE_LIMIT_UPLOADS_PER_MIN to skip this)`);
+        await new Promise((r) => setTimeout(r, wait * 1000));
+      }
+      if (!res.ok) throw new Error(`Upload of ${phase}/${file} failed: ${res.status} ${await res.text()}`);
+      uploaded++;
+    }
+  }
+}
+console.log(`Seeded ${uploaded} runs from samples/pipeline`);
