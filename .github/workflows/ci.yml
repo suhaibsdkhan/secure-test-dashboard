@@ -43,7 +43,8 @@ jobs:
         run: npm run test --workspaces -- --reporter=default --reporter=junit --outputFile.junit=junit.xml
       - run: npm run build
 
-      # Dogfooding: this repo's own test results show up on the deployed dashboard.
+      # The dashboard displays this repo's own pipeline: its test results are uploaded here,
+      # and the Security workflow uploads the ZAP and Trivy results the same way.
       # Set the DASHBOARD_URL variable and DASHBOARD_INGEST_TOKEN secret to enable.
       - name: Upload results to the dashboard
         if: always() && github.ref == 'refs/heads/main' && vars.DASHBOARD_URL != ''
@@ -52,7 +53,7 @@ jobs:
           TOKEN: ${{ secrets.DASHBOARD_INGEST_TOKEN }}
         run: |
           for ws in api web; do
-            curl -fsS -X POST "$DASHBOARD_URL/api/runs?project=dashboard-$ws&branch=main&commit=$GITHUB_SHA" \
+            curl -fsS -X POST "$DASHBOARD_URL/api/runs?project=$ws-tests&branch=main&commit=$GITHUB_SHA" \
               -H "Authorization: Bearer $TOKEN" -H "Content-Type: application/xml" \
               --data-binary "@apps/$ws/junit.xml"
           done
