@@ -2,3 +2,4 @@
 10109	IGNORE	Modern Web Application: informational. Tells ZAP to use the Ajax spider (the workflow passes -j).
 100001	IGNORE	Unexpected Content-Type: only '/' remains, which is the HTML dashboard itself and correctly text/html. Soft-404 regressions are covered by apps/api/test/security.test.ts.
 90022	OUTOFSCOPE	http://.*/api/runs/[0-9a-f-]+$
+10049	IGNORE	Content Cacheability: informational. API responses are deliberately Cache-Control: no-store (live data); static assets are fingerprinted and cached for a year.
