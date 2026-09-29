@@ -1,0 +1,134 @@
+name: Security
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  schedule:
+    - cron: "0 6 * * 1" # weekly, to catch newly published CVEs in unchanged code
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  TRIVY_IMAGE: aquasec/trivy:0.74.0
+  ZAP_IMAGE: ghcr.io/zaproxy/zaproxy:stable
+
+jobs:
+  dependency-scan:
+    name: Dependency scan (npm audit + Trivy)
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version-file: .nvmrc
+      - name: npm audit (production dependencies)
+        run: npm audit --omit=dev --audit-level=high
+      - name: npm audit (all dependencies, report only)
+        run: npm audit || true
+      - name: Trivy filesystem scan (lockfile, secrets, IaC)
+        run: |
+          docker run --rm -v "$PWD:/src" "$TRIVY_IMAGE" fs --quiet \
+            --scanners vuln,secret,misconfig --format sarif --output /src/trivy-fs.sarif /src
+          docker run --rm -v "$PWD:/src" "$TRIVY_IMAGE" fs --quiet \
+            --scanners vuln,secret,misconfig --severity HIGH,CRITICAL --ignore-unfixed --exit-code 1 /src
+      - name: Upload to GitHub code scanning
+        if: always() && hashFiles('trivy-fs.sarif') != ''
+        uses: github/codeql-action/upload-sarif@2892aa5e19bbd11bc0cff5427e3b750a04d9e3c2 # v4.38.2
+        with:
+          sarif_file: trivy-fs.sarif
+          category: trivy-fs
+
+  dependency-review:
+    name: Dependency review
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/dependency-review-action@a1d282b36b6f3519aa1f3fc636f609c47dddb294 # v5.0.0
+        with:
+          fail-on-severity: high
+          comment-summary-in-pr: on-failure
+
+  image-scan:
+    name: Container image scan (Trivy)
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - run: docker build -t app:scan .
+      - name: Scan image
+        run: |
+          docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v "$PWD:/out" "$TRIVY_IMAGE" image --quiet \
+            --scanners vuln,secret --format sarif --output /out/trivy-image.sarif app:scan
+          docker run --rm -v /var/run/docker.sock:/var/run/docker.sock "$TRIVY_IMAGE" image --quiet \
+            --scanners vuln,secret --severity HIGH,CRITICAL --ignore-unfixed --exit-code 1 app:scan
+      - name: Upload to GitHub code scanning
+        if: always() && hashFiles('trivy-image.sarif') != ''
+        uses: github/codeql-action/upload-sarif@2892aa5e19bbd11bc0cff5427e3b750a04d9e3c2 # v4.38.2
+        with:
+          sarif_file: trivy-image.sarif
+          category: trivy-image
+
+  zap:
+    name: OWASP ZAP (baseline + API scan)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version-file: .nvmrc
+      - name: Start the app with throwaway secrets
+        run: |
+          {
+            echo "POSTGRES_PASSWORD=$(openssl rand -hex 16)"
+            echo "INGEST_TOKEN=$(openssl rand -hex 32)"
+            # Raise rate limits so the active scan isn't throttled into testing nothing.
+            echo "RATE_LIMIT_READS_PER_MIN=100000"
+            echo "RATE_LIMIT_UPLOADS_PER_MIN=100000"
+          } > .env
+          docker compose up --build -d --wait
+          node scripts/seed.mjs
+      - name: Baseline scan (passive, whole site)
+        run: |
+          mkdir -p zap && chmod 777 zap && cp .zap/rules.tsv zap/
+          docker run --rm --network host -v "$PWD/zap:/zap/wrk:rw" "$ZAP_IMAGE" \
+            zap-baseline.py -t http://127.0.0.1:8080 -c rules.tsv -j \
+            -r baseline.html -J baseline.json -w baseline.md
+      - name: API scan (active, from the OpenAPI spec, authenticated)
+        if: success() || failure()
+        run: |
+          sed 's#http://localhost:8080#http://127.0.0.1:8080#' apps/api/openapi.yaml > zap/openapi.yaml
+          docker run --rm --network host -v "$PWD/zap:/zap/wrk:rw" \
+            -e ZAP_AUTH_HEADER_VALUE="Bearer $(grep ^INGEST_TOKEN .env | cut -d= -f2)" "$ZAP_IMAGE" \
+            zap-api-scan.py -t /zap/wrk/openapi.yaml -f openapi -c rules.tsv \
+            -r api.html -J api.json -w api.md
+      - name: Job summary
+        if: always()
+        run: cat zap/*.md >> "$GITHUB_STEP_SUMMARY" 2>/dev/null || true
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        if: always()
+        with:
+          name: zap-reports
+          path: zap/
+      - name: App logs on failure
+        if: failure()
+        run: docker compose logs app

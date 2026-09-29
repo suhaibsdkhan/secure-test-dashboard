@@ -1,0 +1,6 @@
+# cp terraform.tfvars.example terraform.tfvars
+region            = "ca-central-1"
+github_repository = "suhaibsdkhan/secure-test-dashboard"
+# certificate_arn = "arn:aws:acm:ca-central-1:123456789012:certificate/..."
+# First apply before any image exists:
+# desired_count = 0

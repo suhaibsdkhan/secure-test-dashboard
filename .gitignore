@@ -11,3 +11,5 @@ infra/terraform/*.tfvars
 !infra/terraform/*.tfvars.example
 zap-reports/
 *.tsbuildinfo
+.terraform.lock.hcl
+junit.xml

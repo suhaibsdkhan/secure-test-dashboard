@@ -1,0 +1,66 @@
+name: Deploy
+
+# Builds the image, pushes it to ECR and rolls the ECS service. Infrastructure itself is
+# created with `terraform apply` (see docs/deploy.md); this only ships new app versions.
+# Requires the AWS_DEPLOY_ROLE_ARN and AWS_REGION repository variables (Terraform outputs them).
+
+# Runs only after the Security workflow (dependency, image and ZAP scans) passes on main.
+on:
+  workflow_dispatch:
+  workflow_run:
+    workflows: [Security]
+    types: [completed]
+    branches: [main]
+
+permissions:
+  contents: read
+  id-token: write # GitHub OIDC -> short-lived AWS credentials; no stored keys
+
+concurrency:
+  group: deploy
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    if: >-
+      vars.AWS_DEPLOY_ROLE_ARN != '' &&
+      (github.event_name == 'workflow_dispatch' ||
+       (github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.event == 'push'))
+    runs-on: ubuntu-latest
+    environment: production
+    env:
+      APP: test-dashboard
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
+      - uses: aws-actions/configure-aws-credentials@e1253824e5c10ff9df46874f81ed3ec929e19cfd # v6.3.0
+        with:
+          role-to-assume: ${{ vars.AWS_DEPLOY_ROLE_ARN }}
+          aws-region: ${{ vars.AWS_REGION }}
+      - id: ecr
+        uses: aws-actions/amazon-ecr-login@03f1aad4c6c7ffd436567f42f9384779290529bd # v2.1.7
+      - name: Build and push
+        id: image
+        env:
+          IMAGE: ${{ steps.ecr.outputs.registry }}/${{ env.APP }}:${{ github.event.workflow_run.head_sha || github.sha }}
+        run: |
+          docker build -t "$IMAGE" .
+          docker push "$IMAGE"
+          echo "image=$IMAGE" >> "$GITHUB_OUTPUT"
+      - name: Fetch current task definition
+        run: |
+          aws ecs describe-task-definition --task-definition "$APP" --query taskDefinition > task-def.json
+      - id: render
+        uses: aws-actions/amazon-ecs-render-task-definition@138c24f321fdbdf7edee4a685519d253cae2cdea # v1.9.0
+        with:
+          task-definition: task-def.json
+          container-name: app
+          image: ${{ steps.image.outputs.image }}
+      - uses: aws-actions/amazon-ecs-deploy-task-definition@c465972ecbd160473f22e683363b422a5412a3de # v2.6.3
+        with:
+          task-definition: ${{ steps.render.outputs.task-definition }}
+          cluster: ${{ env.APP }}
+          service: ${{ env.APP }}
+          wait-for-service-stability: true
