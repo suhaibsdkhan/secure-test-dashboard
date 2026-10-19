@@ -73,7 +73,7 @@ haven't changed.
 - **No WAF (AWS-0011, high).** Added AWS WAF with the AWS managed Common, Known Bad
   Inputs and IP Reputation rule groups plus a per-IP rate limit. The Common rule set's
   8 KB body limit would have blocked every JUnit upload, so that one rule counts
-  instead of blocking, a real-world tuning step.
+  instead of blocking.
 - **No flow logs (AWS-0178).** Added VPC flow logs for rejected traffic.
 
 ### 10. Error messages leaking internals (code review)
@@ -91,7 +91,7 @@ and reads to 300/min, keyed on the real client IP behind CloudFront and the ALB
 (`trust proxy` set to the number of proxies, so a spoofed `X-Forwarded-For` doesn't
 help). The token check itself compares SHA-256 digests with `timingSafeEqual`.
 
-An interesting side effect: the first API scan after adding limits came back mostly
+One side effect: the first API scan after adding limits came back mostly
 `429 Too Many Requests`, meaning the active scan had quietly stopped testing anything.
 The ZAP job now raises the limits for the throwaway scan environment only, and 429s
 return JSON.
