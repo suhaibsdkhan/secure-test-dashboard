@@ -107,4 +107,16 @@ infra/terraform AWS infrastructure
 docs            Security write-up, deploy and ingest guides
 samples         Example JUnit reports; harbour/ and pipeline/ hold real results used by the seed
 scripts         Demo seeding and per-commit scan capture
+.claude         Claude Code commands, hooks and permissions
+CLAUDE.md       Project instructions for Claude Code
 ```
+
+## Working with Claude Code
+
+This repo was built with Claude Code. `CLAUDE.md` holds the project rules the agent follows
+(commands, conventions, what it must never do). `.claude/` adds:
+
+- `/review-diff` and `/fix-finding` commands for a strict review pass and the security-fix workflow
+- a `PreToolUse` hook that blocks reads of `.env`, Terraform variables/state and keys
+- a `PostToolUse` hook that typechecks the workspace after every TypeScript edit
+- permission rules that deny secrets files, `git push` and `terraform apply`
